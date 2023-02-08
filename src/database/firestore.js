@@ -57,14 +57,15 @@ export class Database {
      *     console.log(`Document references ${docRefs}`);
      * });
      * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs to be matched against
+     * @param {String} comparisonOperator Comparison operation for querying method
      * @returns {Promise<QueryDocumentSnapshot<DocumentData>[]} Promise that resolves the array of 
      * `QueryDocumentSnapshot<DocumentData>` if the query finds matching documents
      */
-    async #_queryMatches(fieldValuePairs) {
+    async #_queryMatches(fieldValuePairs, comparisonOperator) {
         return new Promise(async (resolve, reject) => {
             const queryConstraints = [];
             for (const field in fieldValuePairs) {
-                queryConstraints.push(where(field.toString(), '==', fieldValuePairs[field]));
+                queryConstraints.push(where(field.toString(), comparisonOperator, fieldValuePairs[field]));
             }
 
             const queryResult = query(this.collectionRef, ...queryConstraints);
@@ -91,11 +92,12 @@ export class Database {
      *     }
      * });
      * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs to be matched against
+     * @param {String} comparisonOperator Comparison operation for querying method
      * @returns { Promise } Promise that resolves to the array of `DocumentData` if the query finds matching documents
      */
-    async queryMatches(fieldValuePairs) {
+    async queryMatches(fieldValuePairs, comparisonOperator='==') {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs)
+            this.#_queryMatches(fieldValuePairs, comparisonOperator)
             .then((docRefs) => {
                 const docs = docRefs.map((docRef) => ({ ...docRef.data(), id: docRef.id }));
                 resolve(docs);
@@ -185,9 +187,9 @@ export class Database {
      * the matched documents or be added as new fields
      * @returns { Promise<number> } Promise that resolves to the number of updated documents if at least one document is updated
      */
-    async updateMatches(fieldValuePairs, docData) {
+    async updateMatches(fieldValuePairs, docData, comparisonOperator='==') {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs)
+            this.#_queryMatches(fieldValuePairs, comparisonOperator)
             .then((docRefs) => {
                 let updateCount = 0;
                 for (const docRef of docRefs) {
@@ -235,9 +237,9 @@ export class Database {
      * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs used to match against
      * @returns { Promise<number> } Promise that resolves if at least one document is deleted
      */
-    async deleteMatches(fieldValuePairs) {
+    async deleteMatches(fieldValuePairs, comparisonOperator='==') {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs)
+            this.#_queryMatches(fieldValuePairs, comparisonOperator)
             .then((docRefs) => {
                 if (docRefs.length === 0)
                     reject(new ReferenceError('No matching documents.'));
