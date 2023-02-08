@@ -1,12 +1,12 @@
 import { app } from '../config/firebase-config';
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, deleteDoc, setDoc, query, where } from 'firebase/firestore';
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, deleteDoc, setDoc, query, where, orderBy, limit } from 'firebase/firestore';
 
 const db = getFirestore(app);
 
 /**
  *  API for FIrestore database
  */
-export class Database {
+export default class Database {
     /**
      * Create a new Database
      * @param {*} collectionPath Path to the collection in the database
@@ -48,33 +48,55 @@ export class Database {
         });
     }
 
-    /**
+    /** UPDATE
      * Private querying method to return an array of all `QueryDocumentSnapshot<DocumentData>`
      * with fields matching `fieldValuePairs`.
      * @example
      * const db = Database('myCollection');
-     * db._queryMatches({ 'myField': 'myValue' }).then((docRefs) => {
+     * db._queryMatches({ 'myField': ['myValue', '<='] }).then((docRefs) => {
      *     console.log(`Document references ${docRefs}`);
      * });
      * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs to be matched against
-     * @param {String} comparisonOperator Comparison operation for querying method
      * @returns {Promise<QueryDocumentSnapshot<DocumentData>[]} Promise that resolves the array of 
      * `QueryDocumentSnapshot<DocumentData>` if the query finds matching documents
      */
-    async #_queryMatches(fieldValuePairs, comparisonOperator) {
+    async #_queryMatches(fieldValuePairs, sortBy=null, lim=null) {
         return new Promise(async (resolve, reject) => {
             const queryConstraints = [];
             for (const field in fieldValuePairs) {
-                queryConstraints.push(where(field.toString(), comparisonOperator, fieldValuePairs[field]));
+                const fieldValue = fieldValuePairs[field];
+                // Handle default
+                if (fieldValue instanceof String) {
+                    queryConstraints.push(where(field.toString(), '==', fieldValue))
+                }
+                // Handle variable number of custom operators
+                else {
+                    for (const operator in fieldValue) {
+                        queryConstraints.push(where(field.toString(), operator.toString(), fieldValue[operator]));
+                    }
+                }
+            }
+            if (sortBy) {
+                if (sortBy instanceof Array) {
+                    for (const field of sortBy) {
+                        queryConstraints.push(orderBy(field));
+                    }
+                }
+                else {
+                    queryConstraints.push(orderBy(sortBy));
+                }
+            }
+            if (lim) {
+                queryConstraints.push(limit(lim));
             }
 
             const queryResult = query(this.collectionRef, ...queryConstraints);
-            
             await getDocs(queryResult)
             .then((snapshot) => {
                 resolve(snapshot.docs);
             })
             .catch((error) => {
+                console.log("Error");
                 reject(error);
             });
         });
@@ -95,9 +117,9 @@ export class Database {
      * @param {String} comparisonOperator Comparison operation for querying method
      * @returns { Promise } Promise that resolves to the array of `DocumentData` if the query finds matching documents
      */
-    async queryMatches(fieldValuePairs, comparisonOperator='==') {
+    async queryMatches(fieldValuePairs, orderBy=null, lim=null) {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs, comparisonOperator)
+            this.#_queryMatches(fieldValuePairs, orderBy, lim)
             .then((docRefs) => {
                 const docs = docRefs.map((docRef) => ({ ...docRef.data(), id: docRef.id }));
                 resolve(docs);
@@ -187,9 +209,9 @@ export class Database {
      * the matched documents or be added as new fields
      * @returns { Promise<number> } Promise that resolves to the number of updated documents if at least one document is updated
      */
-    async updateMatches(fieldValuePairs, docData, comparisonOperator='==') {
+    async updateMatches(fieldValuePairs, docData) {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs, comparisonOperator)
+            this.#_queryMatches(fieldValuePairs)
             .then((docRefs) => {
                 let updateCount = 0;
                 for (const docRef of docRefs) {
@@ -237,9 +259,9 @@ export class Database {
      * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs used to match against
      * @returns { Promise<number> } Promise that resolves if at least one document is deleted
      */
-    async deleteMatches(fieldValuePairs, comparisonOperator='==') {
+    async deleteMatches(fieldValuePairs) {
         return new Promise(async (resolve, reject) => {
-            this.#_queryMatches(fieldValuePairs, comparisonOperator)
+            this.#_queryMatches(fieldValuePairs)
             .then((docRefs) => {
                 if (docRefs.length === 0)
                     reject(new ReferenceError('No matching documents.'));
@@ -250,5 +272,15 @@ export class Database {
                 resolve(deleteCount);
             })
         })
+    }
+
+    /**
+     * More advanced querying methods
+     */
+
+    async queryPrefix(fieldPrefixPair, sort=false, lim=null) {
+        const [field, prefix] = Object.entries(fieldPrefixPair)[0];
+        const pattern = {[field]: {'>=': prefix, '<=': prefix + '\uf8ff'}};
+        return this.queryMatches(pattern, sort ? field : null, lim);
     }
 }
