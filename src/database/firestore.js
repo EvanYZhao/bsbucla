@@ -63,7 +63,7 @@ export default class Database {
         return new Promise(async (resolve, reject) => {
             await getDocs(this.collectionRef)
             .then((dataSnapshot) => {
-                if (dataSnapshot.docs.length != 0) {
+                if (dataSnapshot.docs.length !== 0) {
                     const docRefs = dataSnapshot.docs;
                     const docs = docRefs.map((docRef) => ({ ...docRef.data(), id: docRef.id }));
                     resolve(docs);
