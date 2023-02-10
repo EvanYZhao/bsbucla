@@ -1,76 +1,58 @@
 import { Autocomplete, Paper, TextField, IconButton, InputAdornment, Box } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 import { useState } from "react";
 import Database from "../database/firestore";
 
 export default function SearchBar({props}) {
-    const courseDB = new Database('courses');
+    const courseDB = new Database('course-labels');
     const [courses, setCourses] = useState([]);
     const [inputTextValue, setInputTextValue] = useState('');
     const [optionIndex, setOptionIndex] = useState(0);
     const [mouseOver, setMouseOver] = useState(false);
 
+    const sortByWordPrefix = (data, prefix) => {
+        const sortedData = data.sort((a, b) => {
+            const wordsA = a.label.toLowerCase().split(' ');
+            const wordsB = b.label.toLowerCase().split(' ');
+            const len = Math.max(wordsA.length, wordsB.length);
+            for (let i = 0; i < len; i++) {
+                if (i >= wordsA.length)
+                    return 1;
+                if (i >= wordsB.length)
+                    return -1;
+                if (wordsA[i].startsWith(prefix) && wordsB[i].startsWith(prefix)) {
+                    return wordsA[i] < wordsB[i] ? -1 : 1;
+                }
+                if (wordsA[i].startsWith(prefix))
+                    return -1;
+                if (wordsB[i].startsWith(prefix))
+                    return 1;
+            }
+            if (a.label > b.label)
+                return 1;
+            if (a.label < b.label)
+                return -1;
+            return 0;
+        });
+        return sortedData;
+    }
+
     const searchPrefix = async (prefix) => {
         // First check if in local storage
-        const oldData = JSON.parse(localStorage.getItem('courses'));
-        console.log(oldData);
+        prefix = prefix.toLowerCase();
+        const oldData = JSON.parse(localStorage.getItem('course-labels'));
         if (oldData) {
-            for (const obj of oldData) {
-                console.log(obj);
-                if (obj['course-name'].toLowerCase().includes(prefix))
-                    return;
-            }
+            const filteredOldData = oldData.filter((doc) => 
+                doc.label.toLowerCase().includes(prefix)
+            )
+            setCourses(sortByWordPrefix(filteredOldData, prefix));
+            return;
         }
         await courseDB.getCollection()
         .then((docs) => {
-            console.log(docs);
-            localStorage.setItem('courses', JSON.stringify(docs));
+            setCourses(sortByWordPrefix(docs, prefix));
+            localStorage.setItem('course-labels', JSON.stringify(docs));
         })
-
-        // const handleResults = (results, previousResults=[]) => {
-
-        //     const newResults = results.map(
-        //         (result) => {
-        //             const subjectName = result['subject-name'].toUpperCase();
-        //             const courseNum = result['course-number'].toUpperCase();
-        //             const courseName = result['course-name'];
-        //             return ({id: result['id'], label: `${subjectName} ${courseNum}: ${courseName}`})
-        //         }
-        //     );
-        //     const filteredResults = [...previousResults, ...newResults].filter((elem, index, self) => 
-        //         self.findIndex((t) => t.id === elem.id) === index
-        //     );
-        //     return filteredResults;
-        // }
-        // prefix = prefix === '' ? '\uf8ff' : prefix.toLowerCase();
-        // let courseList = [];
-
-        // courseDB.queryPrefix({'subject-name': prefix.toLowerCase()}, undefined, 5)
-        // .then((courseDocsList) => {
-        //     courseList = handleResults(courseDocsList);
-        // })
-        // .catch((e) => e)
-        // .finally(() => {
-        //     courseDB.queryPrefix({'course-name-query': prefix.toLowerCase()}, undefined, 5)
-        //     .then((courseDocsList) => {
-        //         courseList = handleResults(courseDocsList, courseList);
-        //         setCourses(courseList);
-        //     })
-        //     .catch((e) => e)
-        //     .finally(() => {
-        //         courseDB.queryPrefix({'course-number': prefix.toLowerCase()}, undefined, 5)
-        //         .then((courseDocsList) => {
-        //             courseList = handleResults(courseDocsList, courseList);
-        //             setCourses(courseList);
-        //         })
-        //         .catch((e) => {
-        //             if (courseList.length == 0)
-        //                 setCourses([]);
-        //             else
-        //                 setCourses(courseList);
-        //             return e;
-        //         });
-        //     })
-        // })
     }
 
     const SearchBarInputBase = (params) => {
@@ -80,6 +62,7 @@ export default function SearchBar({props}) {
             sx={{ display: 'flex', alignItems: 'center' }}
             ref={params.InputProps.ref}
         >
+            
             <TextField
                 {...params}
                 variant="standard"
@@ -87,7 +70,7 @@ export default function SearchBar({props}) {
                 value={inputTextValue}
                 sx={{ padding: '10px' }}
                 inputProps={params.inputProps}
-                InputProps={{...params.InputProps, disableUnderline: true}}
+                InputProps={{...params.InputProps, disableUnderline: true, startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>}}
             />
         </Paper>
         );
