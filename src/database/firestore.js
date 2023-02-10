@@ -48,15 +48,61 @@ export default class Database {
         });
     }
 
-    /** UPDATE
-     * Private querying method to return an array of all `QueryDocumentSnapshot<DocumentData>`
-     * with fields matching `fieldValuePairs`.
+    /**
+     * Gets all the documents in a collection
      * @example
      * const db = Database('myCollection');
-     * db._queryMatches({ 'myField': ['myValue', '<='] }).then((docRefs) => {
-     *     console.log(`Document references ${docRefs}`);
+     * db.getCollection().then((docs) => {
+     *     for (const doc of docs) {
+     *         console.log(doc);
+     *     }
      * });
-     * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs to be matched against
+     * @returns {Promise}
+     */
+    async getCollection() {
+        return new Promise(async (resolve, reject) => {
+            await getDocs(this.collectionRef)
+            .then((dataSnapshot) => {
+                if (dataSnapshot.docs.length != 0) {
+                    const docRefs = dataSnapshot.docs;
+                    const docs = docRefs.map((docRef) => ({ ...docRef.data(), id: docRef.id }));
+                    resolve(docs);
+                }
+                else {
+                    reject(new ReferenceError('No documents in collection'));
+                }
+            })
+            .catch((e) => {
+                reject(e);
+            })
+        });
+    }
+
+    /**
+     * Private querying method to return an array of all `QueryDocumentSnapshot<DocumentData>`
+     * with matching fields.
+     * @example
+     * const db = Database('myCollection');
+     * const myPattern = {'myField': 'a'};
+     * db.#_queryMatches(myPattern).then((docRefs) => {
+     *     for (const docRef of docRefs) {
+     *         console.log(`Document ${docRef.id}: ${docRef.docs}`)
+     *     }
+     * });
+     * @example
+     * const db = Database('myCollection');
+     * // Field value is >= a but < b
+     * const myPattern = {'myField': {'>=': 'a', '<': 'c'}};
+     * db.#_queryMatches(myPattern).then((docRefs) => {
+     *     for (const docRef of docRefs) {
+     *         console.log(`Document ${docRef.id}: ${docRef.docs}`)
+     *     }
+     * });
+     * @param {*} fieldValuePairs Object containing `{ field: value }` pairs to be matched against
+     * The `value` of these pairs can either be a `String`, checking if the document `field` value equals `value`.
+     * Or an `Object` of form `{ operator: value, ... }`, checking if the document `field` value compares to `value` based on `operator`
+     * @param {String} sortBy The field used to sort the documents. Default: `null`
+     * @param {number} lim The maximum number of documents returned. Default: `null`
      * @returns {Promise<QueryDocumentSnapshot<DocumentData>[]} Promise that resolves the array of 
      * `QueryDocumentSnapshot<DocumentData>` if the query finds matching documents
      */
@@ -66,8 +112,8 @@ export default class Database {
             for (const field in fieldValuePairs) {
                 const fieldValue = fieldValuePairs[field];
                 // Handle default
-                if (fieldValue instanceof String) {
-                    queryConstraints.push(where(field.toString(), '==', fieldValue))
+                if (typeof fieldValue == 'string') {
+                    queryConstraints.push(where(field.toString(), '==', fieldValue));
                 }
                 // Handle variable number of custom operators
                 else {
@@ -93,10 +139,12 @@ export default class Database {
             const queryResult = query(this.collectionRef, ...queryConstraints);
             await getDocs(queryResult)
             .then((snapshot) => {
-                resolve(snapshot.docs);
+                if (snapshot.docs.length === 0)
+                    reject(new ReferenceError('No matches.'))
+                else
+                    resolve(snapshot.docs);
             })
             .catch((error) => {
-                console.log("Error");
                 reject(error);
             });
         });
@@ -104,17 +152,29 @@ export default class Database {
 
     /**
      * Querying method to return an array of all `DocumentData`
-     * with fields matching `fieldValuePairs`, each with an added
-     * `id` property as the document's UID.
+     * with matching fields. Each document element has an added `id` property as the document's UID.
      * @example
      * const db = Database('myCollection');
-     * db.queryMatches({ 'myField': 'myValue' }).then((docs) => {
+     * const myPattern = {'myField': 'a'};
+     * db.queryMatches(myPattern).then((docs) => {
      *     for (const doc of docs) {
-     *         console.log(`Data for document ${doc.id}: ${doc}`);
+     *         console.log(`Document ${doc.id}: ${doc}`)
      *     }
      * });
-     * @param {*} fieldValuePairs `Object` containing `{ field: value }` pairs to be matched against
-     * @param {String} comparisonOperator Comparison operation for querying method
+     * @example
+     * const db = Database('myCollection');
+     * // Field value is >= a but < b
+     * const myPattern = {'myField': {'>=': 'a', '<': 'c'}};
+     * db.queryMatches(myPattern).then((docs) => {
+     *     for (const doc of docs) {
+     *         console.log(`Document ${doc.id}: ${doc}`)
+     *     }
+     * });
+     * @param {*} fieldValuePairs Object containing `{ field: value }` pairs to be matched against
+     * The `value` of these pairs can either be a `String`, checking if the document `field` value equals `value`.
+     * Or an `Object` of form `{ operator: value, ... }`, checking if the document `field` value compares to `value` based on `operator`
+     * @param {String} sortBy The field used to sort the documents. Default: `null`
+     * @param {number} lim The maximum number of documents returned. Default: `null`
      * @returns { Promise } Promise that resolves to the array of `DocumentData` if the query finds matching documents
      */
     async queryMatches(fieldValuePairs, orderBy=null, lim=null) {
