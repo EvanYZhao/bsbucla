@@ -3,7 +3,7 @@ import {Button, Card} from "@mui/material";
 export default function GroupCard({groupName, peopleNum, peopleTotal}){
     return(
         <Card 
-            sx = {{minWidth: 275, maxWidth: 100}}
+            sx = {{minWidth: 275, maxHeight: 100}}
         >
             <CardContent>
                 {groupName}
