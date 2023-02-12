@@ -9,7 +9,7 @@ export default function GroupCard({groupName, peopleNum, peopleTotal}){
                 {groupName}
             </CardContent>
             <CardContent>
-                {peopleNum}/{peopleTotal}
+                {peopleNum}/{peopleTotal} people
             </CardContent>
             <CardActions>
                 <Button>Join</Button>
@@ -18,4 +18,5 @@ export default function GroupCard({groupName, peopleNum, peopleTotal}){
     );
 }
 
-//do an onclick for the button to display the group page?
+//do an onclick for the button to route to the group page?
+//would you need the group id too?
