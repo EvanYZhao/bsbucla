@@ -1,4 +1,4 @@
-import {Button, Card} from "@mui/material";
+import {Button, Card, CardContent, CardActions} from "@mui/material";
 
 export default function GroupCard({groupName, peopleNum, peopleTotal, groupID}){
     return(
