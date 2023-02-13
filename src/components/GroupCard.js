@@ -1,6 +1,6 @@
 import {Button, Card} from "@mui/material";
 
-export default function GroupCard({groupName, peopleNum, peopleTotal}){
+export default function GroupCard({groupName, peopleNum, peopleTotal, groupID}){
     return(
         <Card 
             sx = {{minWidth: 275, maxHeight: 100}}
