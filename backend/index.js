@@ -52,7 +52,6 @@ app.listen(3001, () => {
     console.log('Server up.');
     // const rawdata = fs.readFileSync('./courses.json');
     // const subjects = JSON.parse(rawdata).subjects
-    // //console.log(subjects.slice(0, 6))
     // CourseModel.insertMany(subjects, (err, docs) => {
     //     if (err)
     //         console.error(err);
