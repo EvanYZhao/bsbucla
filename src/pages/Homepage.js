@@ -10,7 +10,9 @@ export default function Homepage() {
     <div>
       Welcome {user?.displayName}
       <SignOutButton />
+      <div>
       <GroupCard groupName="group 1" peopleNum="1" peopleTotal="3" groupID="12345" />
+      </div>
     </div>
   );
 }

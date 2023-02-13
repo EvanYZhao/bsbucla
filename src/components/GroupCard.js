@@ -1,18 +1,22 @@
-import {Button, Card, CardContent, CardActions} from "@mui/material";
+import {Button, Card, CardContent, CardActions, Typography} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function GroupCard({groupName, peopleNum, peopleTotal, groupID}){
+    const navigate = useNavigate();
     return(
         <Card 
-            sx = {{minWidth: 275, maxHeight: 100}}
+            sx = {{minWidth: 275, minHeight: 100}}
         >
             <CardContent>
-                {groupName}
-            </CardContent>
-            <CardContent>
-                {peopleNum}/{peopleTotal} people
+                <Typography sx={{ fontSize: 14 }}>
+                    {groupName}
+                </Typography>
+                <Typography sx={{ fontSize: 14 }}>
+                    {peopleNum}/{peopleTotal} people
+                </Typography>
             </CardContent>
             <CardActions>
-                <Button>Join</Button>
+                <Button onClick={()=>navigate("/group")}>Join</Button>
             </CardActions>
         </Card>
     );
