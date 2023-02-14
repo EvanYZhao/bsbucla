@@ -1,58 +1,74 @@
-import { Autocomplete, Paper, TextField, IconButton, InputAdornment, Box } from "@mui/material";
+import { Autocomplete, Paper, TextField, InputAdornment, Box } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from "react";
-import Database from "../database/firestore";
+import { queryCoursePrefix } from "../database/mongodb";
 
 export default function SearchBar({props}) {
-    const courseDB = new Database('course-labels');
     const [courses, setCourses] = useState([]);
     const [inputTextValue, setInputTextValue] = useState('');
     const [optionIndex, setOptionIndex] = useState(0);
     const [mouseOver, setMouseOver] = useState(false);
 
     const sortByWordPrefix = (data, prefix) => {
+        prefix = prefix.trim();
         const sortedData = data.sort((a, b) => {
-            const wordsA = a.label.toLowerCase().split(' ');
-            const wordsB = b.label.toLowerCase().split(' ');
-            const len = Math.max(wordsA.length, wordsB.length);
-            for (let i = 0; i < len; i++) {
-                if (i >= wordsA.length)
-                    return 1;
-                if (i >= wordsB.length)
+            const numA = parseInt(a.number.replace(/\D/g, ''));
+            const numB = parseInt(b.number.replace(/\D/g, ''));
+            const labelAWords = a.subjectLabel.toLowerCase().split(' ');
+            const labelBWords = b.subjectLabel.toLowerCase().split(' ');
+            const maxLabelWords = Math.max(labelAWords.length, labelBWords.length);
+            for (let i = 0; i < maxLabelWords; i++) {
+                if (i >= labelAWords.length)
                     return -1;
-                if (wordsA[i].startsWith(prefix) && wordsB[i].startsWith(prefix)) {
-                    return wordsA[i] < wordsB[i] ? -1 : 1;
+                if (i >= labelBWords.length)
+                    return 1;
+                if (labelAWords[i].startsWith(prefix) && labelBWords[i].startsWith(prefix)) {
+                    continue;
                 }
-                if (wordsA[i].startsWith(prefix))
+                if (labelAWords[i].startsWith(prefix)) {
                     return -1;
-                if (wordsB[i].startsWith(prefix))
+                }
+                if (labelBWords[i].startsWith(prefix)) {
                     return 1;
+                }
             }
-            if (a.label > b.label)
-                return 1;
-            if (a.label < b.label)
+
+            if (a.subjectLabel.toLowerCase().includes(prefix) && b.subjectLabel.toLowerCase().includes(prefix)) {
+                return numA < numB ? -1 : 1;
+            }
+            if (a.subjectLabel.toLowerCase().includes(prefix)) {
                 return -1;
+            }
+            if (b.subjectLabel.toLowerCase().includes(prefix)) {
+                return 1;
+            }
+
+            if (prefix.includes(a.subject) && prefix.includes(b.subject)) {
+                return numA < numB ? -1 : 1;
+            }
+
             return 0;
         });
         return sortedData;
     }
 
     const searchPrefix = async (prefix) => {
+        if (prefix.length === 1)
+            localStorage.removeItem('courseLabels');
         // First check if in local storage
-        prefix = prefix.toLowerCase();
-        const oldData = JSON.parse(localStorage.getItem('course-labels'));
-        if (oldData) {
-            const filteredOldData = oldData.filter((doc) => 
-                doc.label.toLowerCase().includes(prefix)
-            )
-            setCourses(sortByWordPrefix(filteredOldData, prefix));
+        prefix = prefix.toLowerCase().trim();
+        const oldData = JSON.parse(localStorage.getItem('courseLabels'));
+        if (oldData && oldData.length >= 5) {
+            const filteredOldData = oldData.filter((doc) => doc.label.toLowerCase().includes(prefix));
+            setCourses(sortByWordPrefix(filteredOldData, prefix).slice(0, 5));
             return;
         }
-        await courseDB.getCollection()
-        .then((docs) => {
-            setCourses(sortByWordPrefix(docs, prefix));
-            localStorage.setItem('course-labels', JSON.stringify(docs));
-        })
+        const newData = await queryCoursePrefix(prefix);
+        for (const data of newData) {
+            data.label = data.subjectLabel + ' ' + data.number + ' ' + data.name;
+        }
+        setCourses(sortByWordPrefix(newData, prefix).slice(0, 5));
+        localStorage.setItem('courseLabels', JSON.stringify(newData));
     }
 
     const SearchBarInputBase = (params) => {
@@ -86,14 +102,16 @@ export default function SearchBar({props}) {
                 event.preventDefault();
                 setInputTextValue(courses[optionIndex]);
                 break;
+            default:
+                break;
         }
     }
 
     const handleRenderOption = (props, option) => {
         return (
         <li {...props} 
-            onMouseEnter={(e) => setMouseOver(true)}
-            onMouseLeave={(e) => {setMouseOver(false); setOptionIndex(parseInt(props.id.at(-1)))}}
+            onMouseEnter={(e) => {setMouseOver(true); setOptionIndex(parseInt(props.id.split('-').at(2)));}}
+            onMouseLeave={(e) => {setMouseOver(false)}}
             style={{ backgroundColor: ((props.id === `:r0:-option-${optionIndex}`) && !mouseOver) ? '#f5f5f5' : 'primary.main'}}
         >
             <Box>
@@ -114,7 +132,7 @@ export default function SearchBar({props}) {
                 PaperComponent={(props) => <Paper elevation={10} {...props} />}
                 autoComplete={true}
                 options={courses}
-                sx={{ width: 500 }}
+                sx={{ width: 600 }}
                 onKeyDown={handleKeyDown}
                 renderInput={SearchBarInputBase
               }
