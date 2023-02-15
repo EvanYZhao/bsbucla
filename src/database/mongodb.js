@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 async function queryCoursePrefix(prefix) {
-    const courses = await Axios.get('http://localhost:3001/getPrefix?prefix=' + prefix);
+    const courses = await Axios.get('https://us-west-2.aws.data.mongodb-api.com/app/application-0-sroti/endpoint/getPrefix?prefix=' + prefix);
     return courses.data;
 }
 
