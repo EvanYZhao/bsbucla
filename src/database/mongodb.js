@@ -1,9 +1,5 @@
 import Axios from 'axios';
 
-<<<<<<< Updated upstream
-async function queryCoursePrefix(prefix) {
-    const courses = await Axios.get('http://localhost:3001/getPrefix?prefix=' + prefix);
-=======
 const BASEURL = 'http://localhost:3001'
 
 async function queryCoursePrefix(prefix, jwt) {
@@ -16,7 +12,7 @@ async function queryCoursePrefix(prefix, jwt) {
         }
     }
     const courses = await Axios.get(query, config);
->>>>>>> Stashed changes
+    
     return courses.data;
 }
 
