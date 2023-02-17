@@ -1,7 +1,18 @@
 import Axios from 'axios';
 
-async function queryCoursePrefix(prefix) {
-    const courses = await Axios.get('https://us-west-2.aws.data.mongodb-api.com/app/application-0-sroti/endpoint/getPrefix?prefix=' + prefix);
+const BASEURL = 'http://localhost:3001'
+
+async function queryCoursePrefix(prefix, jwt) {
+    const endpoint = BASEURL + '/getCoursePrefix';
+    const query = endpoint + '?prefix=' + prefix;
+    const config = {
+        headers: {
+            jwttokenstring: jwt,
+            'Content-Type': 'application/json'
+        }
+    }
+    const courses = await Axios.get(query, config);
+    
     return courses.data;
 }
 

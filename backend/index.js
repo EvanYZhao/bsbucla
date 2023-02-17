@@ -1,61 +1,51 @@
-const express = require('express');
-const app = express();
-const mongoose = require('mongoose');
-const CourseModel = require('./models/Courses');
-const fs = require('fs');
-
+const Axios = require('axios');
 const cors = require('cors');
+const express = require('express');
 
+const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb+srv://root:Monkey99@cluster0.lm55sto.mongodb.net/project?retryWrites=true&w=majority');
+const BASEURL = 'https://us-west-2.aws.data.mongodb-api.com/app/application-0-sroti/endpoint'
 
-// app.get('/getCourses', (req, res) => {
-//     CourseModel.find({}, (err, result) => {
-//         if (err) {
-//             res.json(err);
-//         }
-//         else {
-//             res.json(result);
-//         }
-//     });
-// });
+/**
+ * Returns an HTTP with appended query params
+ * @param {String} endpoint HTTP endpoint
+ * @param {Object} queries `{ queryKey: queryValue, ... }` object
+ * @returns {String} New HTTP endpoint with queries
+ */
+function queryHandler(endpoint, queries) {
+    let updated = endpoint + '?';
+    for (const query in queries)
+        updated += query + '=' + queries[query] + '&';
+    updated = updated.replace(/&$/g, '');
+    return updated;
+}
 
-app.get('/getPrefix', (req, res) => {
-    const prefix = new RegExp(`(^|[ ])${req.query.prefix}`, 'i');
-    const data = CourseModel.find({
-        '$or': [
-            { 'subject': { $regex: prefix} },
-            { 'number': { $regex: prefix} },
-            { 'name': { $regex: prefix} },
-        ]
+// GET Request to /getCoursePrefix
+app.get('/getCoursePrefix', (req, res) => {
+    const endpoint = BASEURL + '/getCoursePrefix';
+    
+    // Bad request
+    if (!(req.query.prefix && Object.keys(req.query).length === 1 && req.headers.jwttokenstring)) {
+        res.status(400);
+        res.send('400 Bad Request');
+        return;
+    }
+    const updatedEndpoint = queryHandler(endpoint, req.query);
+
+    const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
+
+    Axios.get(updatedEndpoint, config)
+    .then((response) => {
+        res.json(response.data);
     })
-    .sort({'subject': 1, 'number': 1, 'name': 1})
-    .exec((err, docs) => {
-        if (err)
-            res.json(err)
-        else
-            res.json(docs);
-    });
+    .catch((err) => {
+        res.json(err);
+    })
 });
 
-// app.post('/addCourse', async (req, res) => {
-//     const user = req.body;
-//     const newCourse = new CourseModel(user);
-//     await newCourse.save();
-
-//     res.json(user);
-// });
 
 app.listen(3001, () => {
     console.log('Server up.');
-    // const rawdata = fs.readFileSync('./courses.json');
-    // const subjects = JSON.parse(rawdata).subjects
-    // CourseModel.insertMany(subjects, (err, docs) => {
-    //     if (err)
-    //         console.error(err);
-    //     else
-    //         console.log(docs);
-    // })
 });
