@@ -45,6 +45,52 @@ app.get('/getCoursePrefix', (req, res) => {
     })
 });
 
+// GET Request to /getGroupsFromCourseId
+app.get('/getGroupsFromCourseId', (req, res) => {
+    const endpoint = BASEURL + '/getGroupsFromCourseId';
+    
+    // Bad request
+    if (!(req.query.id && Object.keys(req.query).length === 1 && req.headers.jwttokenstring)) {
+        res.status(400);
+        res.send('400 Bad Request');
+        return;
+    }
+    const updatedEndpoint = queryHandler(endpoint, req.query);
+
+    const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
+
+    Axios.get(updatedEndpoint, config)
+    .then((response) => {
+        res.json(response.data);
+    })
+    .catch((err) => {
+        res.json(err);
+    })
+});
+
+// GET Request to /getGroupFromId
+app.get('/getGroupFromId', (req, res) => {
+    const endpoint = BASEURL + '/getGroupFromId';
+    
+    // Bad request
+    if (!(req.query.id && Object.keys(req.query).length === 1 && req.headers.jwttokenstring)) {
+        res.status(400);
+        res.send('400 Bad Request');
+        return;
+    }
+    const updatedEndpoint = queryHandler(endpoint, req.query);
+
+    const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
+
+    Axios.get(updatedEndpoint, config)
+    .then((response) => {
+        res.json(response.data);
+    })
+    .catch((err) => {
+        res.json(err);
+    })
+});
+
 
 app.listen(3001, () => {
     console.log('Server up.');
