@@ -4,6 +4,7 @@ import SigninPage from "./pages/SigninPage";
 import Homepage from "./pages/Homepage";
 import Protected from "./components/Protected";
 import { AuthContextProvider } from "./context/AuthContext";
+import CreateGroupPage from "./pages/CreateGroupPage";
 
 function App() {
   return (
@@ -16,6 +17,14 @@ function App() {
             element={
               <Protected>
                 <Homepage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/createGroup"
+            element={
+              <Protected>
+                <CreateGroupPage />
               </Protected>
             }
           />
