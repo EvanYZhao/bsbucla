@@ -2,7 +2,7 @@
 //import {CardActions, Button} from "@mui/material";
 import { Card, CardContent, Typography} from "@mui/material";
 
-//Class Info Car displays the class name, as well as the class description
+//Class Info Card
 export default function ClassInfoCard({className, classDescription}){
     //const navigate = useNavigate();
     return(
