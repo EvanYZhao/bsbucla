@@ -4,7 +4,7 @@ import { useState } from "react";
 import { queryCoursePrefix } from "../database/mongodb";
 import { UserAuth } from "../context/AuthContext";
 
-export default function SearchBar(props) {
+export default function SearchBar({setcourseid, ...props}) {
     const [courses, setCourses] = useState([]);
     const [inputTextValue, setInputTextValue] = useState('');
     const [optionIndex, setOptionIndex] = useState(0);
@@ -112,33 +112,6 @@ export default function SearchBar(props) {
     }
 
     /**
-     * Handles different key interactions with SearchBar dropdown
-     * If the key is a 'TAB', the selected row is moved down. If the current selected row is at the end, it loops around.
-     * If the key is an 'ENTER', the SearchBar text is replaced with the selected row's text.
-     * @param {KeyboardEvent} event Key Event
-     */
-    const handleKeyDown = (event) => {
-        switch (event.key) {
-            case 'Tab':
-                event.preventDefault();
-                setOptionIndex((optionIndex + 1) % courses.length);
-                break;
-            case 'Enter':
-                event.preventDefault();
-                setInputTextValue(courses[optionIndex]);
-                break;
-            // BUG If you press arrow keys, unintended behavior. FUTURE FIX
-            case 'ArrowUp':
-            case 'ArrowDown':
-            case 'ArrowRight':
-            case 'ArrowLeft':
-                setOptionIndex(-1);
-            default:
-                break;
-        }
-    }
-
-    /**
      * Handles rendering each row in the SearchBar dropdown
      * @param {*} props The props to apply to the `li` element
      * @param {*} option The option to render
@@ -170,10 +143,9 @@ export default function SearchBar(props) {
                 autoComplete={true}
                 options={courses}
                 sx={{ width: props.width }}
-                onKeyDown={handleKeyDown}
                 renderInput={SearchBarInputBase}
                 onInputChange={(e, value) => {searchByWord(value); setInputTextValue(value);} }
-                onChange={(e, value) => setCourses(value ? [value] : [])}
+                onChange={(e, value) => {setCourses(value ? [value] : []); setcourseid(value?._id);}}
                 renderOption={handleRenderOption}
             >
             </Autocomplete>
@@ -183,5 +155,6 @@ export default function SearchBar(props) {
 
 SearchBar.defaultProps = {
     width: 300,
-    cachename: 'labels'
+    cachename: 'labels',
+    setcourseid: () => {}
 }
