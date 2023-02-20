@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const BASEURL = 'https://us-west-2.aws.data.mongodb-api.com/app/application-0-sroti/endpoint'
+const BASEURL = 'https://us-west-2.aws.data.mongodb-api.com/app/cs35l-project-backend-upvkk/endpoint'
 
 /**
  * Returns an HTTP with appended query params
