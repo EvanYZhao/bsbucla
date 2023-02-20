@@ -7,10 +7,14 @@ import { UserAuth } from "../context/AuthContext";
 export default function SearchBar({setcourseid, ...props}) {
     const [courses, setCourses] = useState([]);
     const [inputTextValue, setInputTextValue] = useState('');
-    const [optionIndex, setOptionIndex] = useState(0);
-    const [mouseOver, setMouseOver] = useState(false);
     const { user } = UserAuth();
 
+    /**
+     * Sorts course data based on 
+     * @param {*} data 
+     * @param {*} prefix 
+     * @returns 
+     */
     const sortByWordPrefix = (data, prefix) => {
         prefix = prefix.trim();
         const sortedData = data.sort((a, b) => {
@@ -68,9 +72,15 @@ export default function SearchBar({setcourseid, ...props}) {
 
         // First check if cached
         word = word.toLowerCase();
+        const pattern = new RegExp(`(^| )${word}`)
         const oldData = JSON.parse(localStorage.getItem(props.cachename));
         if (oldData && oldData.length >= 5) {
-            const filteredOldData = oldData.filter((doc) => doc.label.toLowerCase().includes(word));
+            const filteredOldData = oldData.filter((doc) => {
+                if (doc.label.toLowerCase().match(pattern))
+                    return true;
+                else
+                    return false;
+            });
             setCourses(sortByWordPrefix(filteredOldData, word).slice(0, 5));
             return;
         }
@@ -119,11 +129,7 @@ export default function SearchBar({setcourseid, ...props}) {
      */
     const handleRenderOption = (props, option) => {
         return (
-        <li {...props} 
-            onMouseEnter={(e) => {setMouseOver(true); setOptionIndex(parseInt(props.id.split('-').at(2)));}}
-            onMouseLeave={(e) => {setMouseOver(false)}}
-            style={{ backgroundColor: ((props.id === `:r0:-option-${optionIndex}`) && !mouseOver) ? '#f5f5f5' : 'primary.main'}}
-        >
+        <li {...props}>
             <Box>
             {option.label}
             </Box>
