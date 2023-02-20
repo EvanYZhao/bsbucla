@@ -1,6 +1,7 @@
 import React from "react";
 import SearchBar from "../components/SearchBar";
 import SignOutButton from "../components/SignOutButton";
+import GroupCard from "../components/GroupCard"
 import { UserAuth } from "../context/AuthContext";
 
 export default function Homepage() {
@@ -11,6 +12,9 @@ export default function Homepage() {
       <SearchBar/>
       Welcome {user?.displayName}
       <SignOutButton />
+      <div>
+      <GroupCard groupName="group 1" peopleNum="1" peopleTotal="3" groupID="12345" />
+      </div>
     </div>
   );
 }
