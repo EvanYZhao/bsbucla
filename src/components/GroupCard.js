@@ -16,7 +16,7 @@ export default function GroupCard({groupName, peopleNum, peopleTotal, groupID}){
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button onClick={()=>navigate("/group")}>Join</Button>
+                <Button onClick={()=>navigate(`/group/${groupID}`)}>Join</Button>
             </CardActions>
         </Card>
     );

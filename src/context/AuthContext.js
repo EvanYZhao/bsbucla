@@ -10,7 +10,11 @@ import { auth } from "../config/firebase-config";
 
 const AuthContext = createContext();
 
-//Component wrapper which provides context values in App.js
+/**
+ *  Defines a set of functions that can be used throughout the application related to 
+ * user login information and google sign-in or sign-out functionality
+ * @returns {AuthContext.Provider} `AuthContext.Provider` Component
+ */
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
 
@@ -44,7 +48,10 @@ export const AuthContextProvider = ({ children }) => {
   );
 };
 
-//Creation of value that stores context API and values
+/**
+ * Import this function to access all the functions defined in the AuthContextProvider method above
+ * @returns All defined functions within AuthContextProvider()
+ */
 export const UserAuth = () => {
   return useContext(AuthContext);
 };

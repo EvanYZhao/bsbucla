@@ -27,6 +27,7 @@ export default function TestingPage() {
       }
     }
     fetchData();
+    console.log(user?.accessToken)
   }, [courseId, user.accessToken, setCourse, setGroups]);
 
   // This function will handle whether an old member wants to leave

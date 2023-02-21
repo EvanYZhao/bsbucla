@@ -1,19 +1,19 @@
-import Axios from 'axios';
+import Axios from "axios";
 
-const BASEURL = 'http://localhost:3001'
+const BASEURL = "http://localhost:3001";
 
 async function queryCoursePrefix(prefix, jwt) {
-    const endpoint = BASEURL + '/getCoursePrefix';
-    const query = endpoint + '?prefix=' + prefix;
-    const config = {
-        headers: {
-            jwttokenstring: jwt,
-            'Content-Type': 'application/json'
-        }
-    }
-    const courses = await Axios.get(query, config);
-    
-    return courses.data;
+  const endpoint = BASEURL + "/getCoursePrefix";
+  const query = endpoint + "?prefix=" + prefix;
+  const config = {
+    headers: {
+      jwttokenstring: jwt,
+      "Content-Type": "application/json",
+    },
+  };
+  const courses = await Axios.get(query, config);
+
+  return courses.data;
 }
 
 async function queryCourseFromId(courseId, jwt) {

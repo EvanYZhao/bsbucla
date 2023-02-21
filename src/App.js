@@ -21,7 +21,7 @@ function App() {
             }
           />
           <Route
-            path="/group"
+            path="/group/:id"
             element={
               <Protected>
                 <GroupPage />
