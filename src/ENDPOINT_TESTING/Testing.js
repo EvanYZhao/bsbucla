@@ -164,7 +164,7 @@ export default function TestingPage() {
             <div key={id}>
             <h4>{member.name}</h4>
             {member.hasOwnProperty('email') ? <h5>{member.email}</h5> : <></>}
-            {member.hasOwnProperty('picture') ? <img src={member.picture} alt="Pfp"></img> : <></>}
+            {member.hasOwnProperty('picture') ? <img referrerpolicy="no-referrer" src={member.picture} alt="Pfp"></img> : <></>}
             </div>
           )
         })
