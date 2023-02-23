@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 export default function SearchBar({ setcourseid, ...props }) {
   const [courses, setCourses] = useState([]);
   const [inputTextValue, setInputTextValue] = useState("");
+  const [currentCourse, setCurrentCourse] = useState({});
   const { user } = UserAuth();
   const navigate = useNavigate();
 
@@ -153,48 +154,13 @@ export default function SearchBar({ setcourseid, ...props }) {
   };
 
   /**
-   * Processes the input string to create a structured prefix query to retrieve course id from database
+   * Navigates to page with course data
    * @param {*} e The value returned from search box submission
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let encountered = false;
-    let courseNumber = 0;
-    const courseInput = e.target[0].value.split(" ");
-    const filteredCourse = [];
-    // Filters subject out and only takes course name
-    for (let i = 0; i < courseInput.length; ++i) {
-      if (/\d/.test(courseInput[i])) {
-        encountered = true;
-        courseNumber = courseInput[i];
-        continue;
-      }
-
-      if (encountered) {
-        filteredCourse.push(courseInput[i]);
-      }
-    }
-    const newPrefix = filteredCourse.join(" ");
-    let data = await queryCoursePrefix(newPrefix, user?.accessToken);
-    // Uses course number to resolve multiple courses having same name
-    if (data.length > 1) {
-      for (const classes of data) {
-        if (classes.number === courseNumber) {
-          data = classes;
-        }
-      }
-    } else {
-      data = data[0];
-    }
-
-    navigate(`/course/${data._id}`, {
-      state: {
-        name: data.name,
-        number: data.number,
-        professors: data.professors,
-        subject: data.subject,
-        subjectLabel: data.subjectLabel
-      },
+    navigate(`/course/${currentCourse._id}`, {
+      state: currentCourse,
     });
   };
 
@@ -217,6 +183,7 @@ export default function SearchBar({ setcourseid, ...props }) {
         onChange={(e, value) => {
           setCourses(value ? [value] : []);
           setcourseid(value?._id);
+          setCurrentCourse(value);
         }}
         renderOption={handleRenderOption}
         onSubmit={handleSubmit}
