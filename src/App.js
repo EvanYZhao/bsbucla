@@ -5,8 +5,8 @@ import Homepage from "./pages/Homepage";
 import GroupPage from "./pages/GroupPage";
 import Protected from "./components/Protected";
 import { AuthContextProvider } from "./context/AuthContext";
-import TestingPage from "./ENDPOINT_TESTING/Testing";
-import CoursePage from "./pages/CoursePage";
+import CreateGroupPage from "./pages/CreateGroupPage";
+
 function App() {
   return (
     <div>
@@ -22,26 +22,10 @@ function App() {
             }
           />
           <Route
-            path="/group/:id"
+            path="/createGroup"
             element={
               <Protected>
-                <GroupPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/testing"
-            element={
-              <Protected>
-                <TestingPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/course/:id"
-            element={
-              <Protected>
-                <CoursePage />
+                <CreateGroupPage />
               </Protected>
             }
           />
