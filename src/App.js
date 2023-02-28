@@ -6,6 +6,8 @@ import GroupPage from "./pages/GroupPage";
 import Protected from "./components/Protected";
 import { AuthContextProvider } from "./context/AuthContext";
 import CreateGroupPage from "./pages/CreateGroupPage";
+import CoursePage from "./pages/CoursePage";
+import TestingPage from "./ENDPOINT_TESTING/Testing";
 
 function App() {
   return (
@@ -13,6 +15,30 @@ function App() {
       <AuthContextProvider>
         <Routes>
           <Route path="/" element={<SigninPage />} />
+          <Route
+            path="testing" // Tentative testing page DO NOT DELETE
+            element={
+              <Protected>
+                <TestingPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/group/:id"
+            element={
+              <Protected>
+                <GroupPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/course/:id"
+            element={
+              <Protected>
+                <CoursePage />
+              </Protected>
+            }
+          />
           <Route
             path="/home"
             element={
