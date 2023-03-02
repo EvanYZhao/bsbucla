@@ -16,14 +16,14 @@ export default function GroupCard({
   const navigate = useNavigate();
   return (
     <Card sx={{ minWidth: 275, minHeight: 100 }}>
-      <CardContent>
+      <CardContent style={{display: "flex", flexDirection: "column", alignItems:"center"}}>
         <Typography sx={{ fontSize: 14 }}>{groupName}</Typography>
         <Typography sx={{ fontSize: 14 }}>
           {peopleNum}/{peopleTotal} people
         </Typography>
       </CardContent>
-      <CardActions>
-        <Button onClick={() => navigate(`/group/${groupID}`)}>Join</Button>
+      <CardActions style={{justifyContent: "center"}}>
+        <Button onClick={() => navigate(`/group/${groupID}`)}>View</Button>
       </CardActions>
     </Card>
   );

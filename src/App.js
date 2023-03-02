@@ -8,10 +8,12 @@ import { AuthContextProvider } from "./context/AuthContext";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import CoursePage from "./pages/CoursePage";
 import TestingPage from "./ENDPOINT_TESTING/Testing";
+import { CssBaseline } from "@mui/material";
 
 function App() {
   return (
-    <div>
+    <>
+      <CssBaseline />
       <AuthContextProvider>
         <Routes>
           <Route path="/" element={<SigninPage />} />
@@ -57,7 +59,7 @@ function App() {
           />
         </Routes>
       </AuthContextProvider>
-    </div>
+    </>
   );
 }
 
