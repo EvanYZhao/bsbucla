@@ -138,7 +138,7 @@ export default function TestingPage() {
         }
       }}>
         <input id="groupId" type="text" value={groupId} onChange={(e) => setGroupId(e.target.value)}></input>
-        <input type="submit" value="Submit" />
+        <button type="submit"> Submit </button>
       </form>
 
       {
