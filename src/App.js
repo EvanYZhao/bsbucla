@@ -8,11 +8,13 @@ import { AuthContextProvider } from "./context/AuthContext";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import CoursePage from "./pages/CoursePage";
 import TestingPage from "./ENDPOINT_TESTING/Testing";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
     <div>
       <AuthContextProvider>
+        <Navbar/>
         <Routes>
           <Route path="/" element={<SigninPage />} />
           <Route
