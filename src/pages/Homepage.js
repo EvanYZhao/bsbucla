@@ -14,7 +14,7 @@ export default function Homepage() {
       Welcome {user?.displayName}
       <SignOutButton /> 
       <CreateGroupButton />
-      <GroupCard groupName="name" peopleNum={3} peopleTotal={5} groupID="63f384e879ca42169116540c"/>
+      <GroupCard groupName="name" peopleNum={3} peopleTotal={5} groupID="63f550b3a42890973b7ce6b9"/>
     </div>
     
   );

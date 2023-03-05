@@ -2,7 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-import { queryCourseFromId, queryGroupFromId } from "../database/mongodb";
+import { Button } from "@mui/material";
+import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
 
 export default function GroupPage() {
   //this is the group ID
@@ -21,6 +22,25 @@ export default function GroupPage() {
     fetchData();
   }, [user.accessToken, setGroup, setCourse]);
 
+  const joinButtonHandler = async () => {
+    // Old member
+    if (group?.members[0].hasOwnProperty('email')) {
+      await leaveGroupById(id, user.accessToken);
+    }
+    // New member
+    else {
+      await joinGroupById(id, user.accessToken);
+    }
+
+    // Update data
+    queryGroupFromId(id, user?.accessToken)
+    .then(data => setGroup(data))
+    .catch((err) => setGroup(undefined))
+
+    const data = await queryCourseFromId(group?.courseId, user.accessToken);
+    setCourse(data);
+  }
+
   return (
     <div>
       <h3>Group Name: {group?.name}</h3>
@@ -35,7 +55,7 @@ export default function GroupPage() {
         </div>
       );
       })}
-      
+      <Button onClick={joinButtonHandler}>{group?.members[0].hasOwnProperty('email') ? 'Leave group' : 'Join group'}</Button>
     </div>
   );
 }
