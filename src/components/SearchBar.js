@@ -193,6 +193,11 @@ export default function SearchBar({ setcourseid, ...props }) {
           setcourseid(value?._id);
           setCurrentCourse(value);
           setNoSelected(false);
+          if (value) {
+            navigate(`/course/${value?._id}`, {
+              state: value,
+            });
+          }
         }}
         renderOption={handleRenderOption}
         onSubmit={handleSubmit}
