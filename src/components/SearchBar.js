@@ -15,6 +15,7 @@ export default function SearchBar({ setcourseid, ...props }) {
   const [courses, setCourses] = useState([]);
   const [inputTextValue, setInputTextValue] = useState("");
   const [currentCourse, setCurrentCourse] = useState({});
+  const [noSelected, setNoSelected] = useState(true);
   const { user } = UserAuth();
   const navigate = useNavigate();
 
@@ -174,16 +175,24 @@ export default function SearchBar({ setcourseid, ...props }) {
         PaperComponent={(props) => <Paper elevation={10} {...props} />}
         autoComplete={true}
         options={courses}
-        sx={{ width: props.width }}
+        sx={{ width: props.width, '&.MuiAutocomplete-root.Mui-focused > .MuiPaper-root': { borderRadius: courses.length && noSelected ? '26px 26px 0px 0px' : '50px' }, '&.MuiAutocomplete-root > .MuiPaper-root': { borderRadius: '50px' } }}
         renderInput={SearchBarInputBase}
+        onOpen={(e) => {
+          setNoSelected(true);
+        }}
+        onClose={(e) => {
+          setNoSelected(false);
+        }}
         onInputChange={(e, value) => {
           searchByWord(value);
           setInputTextValue(value);
+          setNoSelected(true);
         }}
         onChange={(e, value) => {
           setCourses(value ? [value] : []);
           setcourseid(value?._id);
           setCurrentCourse(value);
+          setNoSelected(false);
         }}
         renderOption={handleRenderOption}
         onSubmit={handleSubmit}
