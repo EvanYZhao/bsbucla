@@ -13,6 +13,7 @@ export default function GroupPage() {
   const [course, setCourse] = useState('');
 
   useEffect(() => {
+    console.log("use effect called");
     const fetchData = async () => {
     const groupData = await queryGroupFromId(id, user.accessToken);
     const courseData = await queryCourseFromId(groupData?.courseId, user.accessToken);
@@ -23,6 +24,7 @@ export default function GroupPage() {
   }, [user.accessToken, setGroup, setCourse]);
 
   const joinButtonHandler = async () => {
+    console.log("join button handler called");
     // Old member
     if (group?.members[0].hasOwnProperty('email')) {
       await leaveGroupById(id, user.accessToken);
@@ -38,7 +40,7 @@ export default function GroupPage() {
     .catch((err) => setGroup(undefined))
 
     const data = await queryCourseFromId(group?.courseId, user.accessToken);
-    setCourse(data);
+    setCourse(data?.name);
   }
 
   return (
