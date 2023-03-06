@@ -99,7 +99,7 @@ export default function SearchBar({ setcourseid, ...props }) {
 
     // Query if not cached
     const jwt = user?.accessToken;
-    const newData = await queryCoursePrefix(word, jwt);
+    const newData = await queryCoursePrefix(jwt, word);
     for (const data of newData) {
       data.label = data.subjectLabel + " " + data.number + " " + data.name;
     }

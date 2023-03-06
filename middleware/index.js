@@ -177,7 +177,7 @@ app.get('/createGroup', (req, res) => {
     const endpoint = BASEURL + '/createGroup';
     
     // Bad request
-    if (!(req.query.name && req.query.courseId && Object.keys(req.query).length === 2 && req.headers.jwttokenstring)) {
+    if (!(req.query.name && req.query.courseId && req.query.maxMembers && Object.keys(req.query).length === 3 && req.headers.jwttokenstring)) {
         res.status(400);
         res.send('400 Bad Request');
         return;

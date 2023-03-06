@@ -20,8 +20,8 @@ export default function TestingPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (courseId !== '' && courseId) {
-        const data = await queryCourseFromId(courseId, user.accessToken);
-        const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+        const data = await queryCourseFromId(user.accessToken, courseId);
+        const groups = await queryGroupsFromCourseId(user.accessToken, courseId);
         setCourse(data);
         setGroups(groups);
       }
@@ -35,20 +35,20 @@ export default function TestingPage() {
   const joinButtonHandler = async () => {
     // Old member
     if (group?.members[0].hasOwnProperty('email')) {
-      await leaveGroupById(groupId, user.accessToken);
+      await leaveGroupById(user.accessToken, groupId);
     }
     // New member
     else {
-      await joinGroupById(groupId, user.accessToken);
+      await joinGroupById(user.accessToken, groupId);
     }
 
     // Update data
-    queryGroupFromId(groupId, user?.accessToken)
+    queryGroupFromId(user?.accessToken, groupId)
     .then(data => setGroup(data))
     .catch((err) => setGroup(undefined))
 
-    const data = await queryCourseFromId(courseId, user.accessToken);
-    const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+    const data = await queryCourseFromId(user.accessToken, courseId);
+    const groups = await queryGroupsFromCourseId(user.accessToken, courseId);
     setCourse(data);
     setGroups(groups);
   }
@@ -105,9 +105,9 @@ export default function TestingPage() {
         const courseId = e.target.courseId.value;
 
         if (name !== '' && courseId !== '') {
-          await createGroup(name, courseId, user.accessToken);
-          const data = await queryCourseFromId(courseId, user.accessToken);
-          const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+          await createGroup(user.accessToken, name, courseId);
+          const data = await queryCourseFromId(user.accessToken, courseId);
+          const groups = await queryGroupsFromCourseId(user.accessToken,courseId);
           setCourse(data);
           setGroups(groups);
         }
@@ -129,7 +129,7 @@ export default function TestingPage() {
         e.preventDefault();
         const value = e.target.groupId.value;
         if (value !== '') {
-          queryGroupFromId(value, user?.accessToken)
+          queryGroupFromId(user?.accessToken, value)
           .then(data => setGroup(data))
           .catch((err) => {setGroup(undefined); console.log(err)})
         }
