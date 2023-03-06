@@ -103,9 +103,10 @@ export default function TestingPage() {
         e.preventDefault();
         const name = e.target.name.value;
         const courseId = e.target.courseId.value;
+        const maxMembers = e.target.maxMembers.value;
 
-        if (name !== '' && courseId !== '') {
-          await createGroup(user.accessToken, name, courseId);
+        if (name !== '' && courseId !== '' && maxMembers >= 0) {
+          await createGroup(user.accessToken, name, courseId, maxMembers);
           const data = await queryCourseFromId(user.accessToken, courseId);
           const groups = await queryGroupsFromCourseId(user.accessToken,courseId);
           setCourse(data);
@@ -114,6 +115,7 @@ export default function TestingPage() {
       }}>
         <label>Name: </label><input id="name" type="text"></input>
         <label>CourseId: </label><input id="courseId" type="text"></input>
+        <label>MaxMembers: </label><input id="maxMembers" type="number" defaultValue="0"></input>
         <input type="submit" value="Submit" />
       </form>
       <br/>

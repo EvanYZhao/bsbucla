@@ -1,26 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import SignOutButton from "../components/SignOutButton";
 import CreateGroupButton from "../components/CreateGroupButton";
 import { UserAuth } from "../context/AuthContext";
 import Typography from '@mui/material/Typography';
 import GroupCard from "../components/GroupCard";
-import { getUserProfile } from "../database/mongodb";
+import { getUserProfile, queryGroupFromId } from "../database/mongodb";
 
 export default function Homepage() {
   const { user } = UserAuth(); // Used to display user name
-  const { groups, setGroups } = useState([]);
+  const [ groups, setGroups ] = useState([]);
+  const listId = useId();
 
   useEffect(() => {
     getUserProfile(user?.accessToken)
-    .then((resp) => {
-      console.log(resp)
-      setGroups(resp.groups);
-    })
-  }, [user, setGroups]);
+    .then(profile => {
+      setGroups(profile.groups)
+    });
+  }, [user]);
 
   return (
-    <div class="bg-slate-50 h-full">
+    <div class="bg-slate-100 h-full flex flex-col items-center">
       <div id="navTitle"
            class="w-full
                   h-20
@@ -34,14 +34,23 @@ export default function Homepage() {
         </Typography>
       </div>
       
-      <GroupCard groupName="Monkeys"
-                   peopleNum="20"
-                   peopleTotal="30"
-                   groupID="0"
-        />
-      {
-        groups?.map((g) => <h1>g</h1>)
-      }
+      <div class="grid grid-cols-2 w-full px-24">
+      <div class="flex flex-col space-y-6 items-center">
+        <Typography variant="h5">
+          Column 1 (Maybe Chatbox?)
+          </Typography>
+        </div>
+        <div class="flex flex-col space-y-6 items-center">
+          <Typography variant="h5">
+          My Groups
+          </Typography>
+          <div class="w-1/2 space-y-4">
+            {
+              groups?.map((g) => <GroupCard id={listId} groupID={g}/>)
+            }
+          </div>
+        </div>
+      </div>
     </div>
     
   );
