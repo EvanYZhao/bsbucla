@@ -53,7 +53,7 @@ export default function Navbar() {
                    px-6
                    text-lg text-gray-700
                    bg-neutral-800
-                   h-20
+                   h-16
                    "
         >
             <div class="flex justify-start items-center">
@@ -62,7 +62,7 @@ export default function Navbar() {
                 >
                     <img referrerpolicy="no-referrer" 
                         class="object-scale-down 
-                            h-14
+                            h-10
                             " 
                         src={logos[0]}
                         alt="pfp"/>
@@ -95,7 +95,7 @@ export default function Navbar() {
                                 border-2
                                 border-white
                                 rounded-full 
-                                h-14
+                                h-10
                                 " 
                          src={user?.photoURL} 
                          alt="pfp"/>
