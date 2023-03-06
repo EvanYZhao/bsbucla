@@ -100,6 +100,19 @@ async function createGroup(name, courseId, jwt) {
     return group.data;
 }
 
+async function getUserProfile(jwt) {
+    const endpoint = BASEURL + '/getUserProfile';
+    const config = {
+        headers: {
+            jwttokenstring: jwt,
+            'Content-Type': 'application/json'
+        }
+    }
+    const group = await Axios.get(endpoint, config);
+
+    return group.data;
+}
+
 export {
     queryCoursePrefix,
     queryCourseFromId,
@@ -107,5 +120,6 @@ export {
     queryGroupFromId,
     joinGroupById,
     leaveGroupById,
-    createGroup
+    createGroup,
+    getUserProfile
 }

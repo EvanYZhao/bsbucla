@@ -197,6 +197,30 @@ app.get('/createGroup', (req, res) => {
     });
 });
 
+// Request to /getUserProfile
+app.get('/getUserProfile', (req, res) => {
+    const endpoint = BASEURL + '/getUserProfile';
+    
+    // Bad request
+    if (!(Object.keys(req.query).length === 0 && req.headers.jwttokenstring)) {
+        res.status(400);
+        res.send('400 Bad Request');
+        return;
+    }
+
+    const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
+
+    Axios.get(endpoint, config)
+    .then((response) => {
+        res.status(response.status);
+        res.json(response.data);
+    })
+    .catch((err) => {
+        res.status(err.response.status);
+        res.json(err.response.data);
+    });
+});
+
 app.listen(3001, () => {
     console.log('Server up.');
 });

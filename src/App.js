@@ -12,7 +12,7 @@ import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <div>
+    <div class="flex flex-col h-screen">
       <AuthContextProvider>
         <Navbar/>
         <Routes>
