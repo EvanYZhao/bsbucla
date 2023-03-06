@@ -50,10 +50,25 @@ function App() {
             }
           />
           <Route
-            path="/createGroup"
+            path="/group/:id"
             element={
               <Protected>
-                <CreateGroupPage />
+                <GroupPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/testing"
+            element={
+              <Protected>
+                <TestingPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/course/:id"
+            element={
+              <Protected>
               </Protected>
             }
           />
@@ -62,5 +77,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

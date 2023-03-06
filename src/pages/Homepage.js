@@ -3,6 +3,7 @@ import SearchBar from "../components/SearchBar";
 import SignOutButton from "../components/SignOutButton";
 import CreateGroupButton from "../components/CreateGroupButton";
 import { UserAuth } from "../context/AuthContext";
+import GroupCard from "../components/GroupCard";
 
 export default function Homepage() {
   const { user } = UserAuth(); // Used to display user name
@@ -13,6 +14,7 @@ export default function Homepage() {
       Welcome {user?.displayName}
       <SignOutButton /> 
       <CreateGroupButton />
+      <GroupCard groupName="name" peopleNum={3} peopleTotal={5} groupID="63f550b3a42890973b7ce6b9"/>
     </div>
     
   );
