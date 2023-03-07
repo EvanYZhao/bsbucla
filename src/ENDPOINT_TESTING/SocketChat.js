@@ -62,7 +62,7 @@ export default function SocketChatPage() {
         </Button>
         <ul>
           {
-            messages.map(m => <li id={IDgen}>{m.message}</li>)
+            messages.map(m => <li key={IDgen}>{m.message}</li>)
           }
         </ul>
         
