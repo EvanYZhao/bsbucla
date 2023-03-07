@@ -3,11 +3,11 @@ import Axios from "axios";
 const BASEURL = "http://localhost:3001";
 
 async function queryCoursePrefix(jwt, prefix) {
-  const endpoint = BASEURL + "/getCoursePrefix";
+  const endpoint = BASEURL + "/getCoursesByPrefix";
   const query = endpoint + "?prefix=" + prefix;
   const config = {
     headers: {
-      jwttokenstring: jwt,
+      "Authorization": 'Bearer ' + jwt,
       "Content-Type": "application/json",
     },
   };
@@ -17,11 +17,11 @@ async function queryCoursePrefix(jwt, prefix) {
 }
 
 async function queryCourseFromId(jwt, courseId) {
-    const endpoint = BASEURL + '/getCourseFromId';
+    const endpoint = BASEURL + '/getCourseById';
     const query = endpoint + '?id=' + courseId;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
@@ -31,11 +31,11 @@ async function queryCourseFromId(jwt, courseId) {
 }
 
 async function queryGroupsFromCourseId(jwt, courseId) {
-    const endpoint = BASEURL + '/getGroupsFromCourseId';
+    const endpoint = BASEURL + '/getGroupsByCourseId';
     const query = endpoint + '?id=' + courseId;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
@@ -45,11 +45,11 @@ async function queryGroupsFromCourseId(jwt, courseId) {
 }
 
 async function queryGroupFromId(jwt, groupId) {
-    const endpoint = BASEURL + '/getGroupFromId';
+    const endpoint = BASEURL + '/getGroupById';
     const query = endpoint + '?id=' + groupId;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
@@ -63,11 +63,11 @@ async function joinGroupById(jwt, groupId) {
     const query = endpoint + '?id=' + groupId;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
-    const group = await Axios.get(query, config);
+    const group = await Axios.patch(query, config);
 
     return group.data;
 }
@@ -77,11 +77,11 @@ async function leaveGroupById(jwt, groupId) {
     const query = endpoint + '?id=' + groupId;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
-    const group = await Axios.get(query, config);
+    const group = await Axios.patch(query, config);
 
     return group.data;
 }
@@ -91,20 +91,20 @@ async function createGroup(jwt, name, courseId, maxMembers=0) {
     const query = endpoint + '?name=' + name + '&courseId=' + courseId + '&maxMembers=' + maxMembers;
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
-    const group = await Axios.get(query, config);
+    const group = await Axios.post(query, config);
 
     return group.data;
 }
 
 async function getUserProfile(jwt) {
-    const endpoint = BASEURL + '/getUserProfile';
+    const endpoint = BASEURL + '/getUser';
     const config = {
         headers: {
-            jwttokenstring: jwt,
+            "Authorization": 'Bearer ' + jwt,
             'Content-Type': 'application/json'
         }
     }
