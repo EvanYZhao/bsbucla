@@ -15,6 +15,7 @@ export default function SearchBar({ setcourseid, ...props }) {
   const [courses, setCourses] = useState([]);
   const [inputTextValue, setInputTextValue] = useState("");
   const [currentCourse, setCurrentCourse] = useState({});
+  const [noSelected, setNoSelected] = useState(true);
   const { user } = UserAuth();
   const navigate = useNavigate();
 
@@ -98,7 +99,7 @@ export default function SearchBar({ setcourseid, ...props }) {
 
     // Query if not cached
     const jwt = user?.accessToken;
-    const newData = await queryCoursePrefix(word, jwt);
+    const newData = await queryCoursePrefix(jwt, word);
     for (const data of newData) {
       data.label = data.subjectLabel + " " + data.number + " " + data.name;
     }
@@ -123,7 +124,7 @@ export default function SearchBar({ setcourseid, ...props }) {
           variant="standard"
           placeholder="Search Courses"
           value={inputTextValue}
-          sx={{ padding: "10px" }}
+          sx={{ padding: "4px 10px" }}
           inputProps={params.inputProps}
           InputProps={{
             ...params.InputProps,
@@ -174,16 +175,29 @@ export default function SearchBar({ setcourseid, ...props }) {
         PaperComponent={(props) => <Paper elevation={10} {...props} />}
         autoComplete={true}
         options={courses}
-        sx={{ width: props.width }}
+        sx={{ width: props.width, '&.MuiAutocomplete-root.Mui-focused > .MuiPaper-root': { borderRadius: courses.length && noSelected ? '20px 20px 0px 0px' : '50px' }, '&.MuiAutocomplete-root > .MuiPaper-root': { borderRadius: '50px' } }}
         renderInput={SearchBarInputBase}
+        onOpen={(e) => {
+          setNoSelected(true);
+        }}
+        onClose={(e) => {
+          setNoSelected(false);
+        }}
         onInputChange={(e, value) => {
           searchByWord(value);
           setInputTextValue(value);
+          setNoSelected(true);
         }}
         onChange={(e, value) => {
           setCourses(value ? [value] : []);
           setcourseid(value?._id);
           setCurrentCourse(value);
+          setNoSelected(false);
+          if (value) {
+            navigate(`/course/${value?._id}`, {
+              state: value,
+            });
+          }
         }}
         renderOption={handleRenderOption}
         onSubmit={handleSubmit}

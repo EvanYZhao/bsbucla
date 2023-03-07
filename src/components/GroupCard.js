@@ -5,25 +5,41 @@ import {
   CardActions,
   Typography,
 } from "@mui/material";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserAuth } from "../context/AuthContext";
+import { queryGroupFromId } from "../database/mongodb";
 
+
+/**
+ * Group card displaying basic group information
+ * @param {*} groupID Group ID in MongoDB 'groups' collection
+ * @returns {JSX.Element}
+ */
 export default function GroupCard({
-  groupName,
-  peopleNum,
-  peopleTotal,
-  groupID,
+  groupID
 }) {
+  const { user } = UserAuth();
   const navigate = useNavigate();
+
+  const [group, setGroup] = useState({});
+  useEffect(() => {
+    queryGroupFromId(user?.accessToken, groupID)
+    .then((group) => {
+      setGroup(group);
+    });
+  }, [groupID]);
+
   return (
     <Card sx={{ minWidth: 275, minHeight: 100 }}>
-      <CardContent style={{display: "flex", flexDirection: "column", alignItems:"center"}}>
-        <Typography sx={{ fontSize: 14 }}>{groupName}</Typography>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }}>{group?.name}</Typography>
         <Typography sx={{ fontSize: 14 }}>
-          {peopleNum}/{peopleTotal} people
+          {group?.members?.length}{group?.maxMembers !== 0 ? '/' + group?.maxMembers : '' } { group?.maxMembers ? 'people' : group?.members?.length > 1 ? 'people' : 'person'}
         </Typography>
       </CardContent>
-      <CardActions style={{justifyContent: "center"}}>
-        <Button onClick={() => navigate(`/group/${groupID}`)}>View</Button>
+      <CardActions>
+        <Button onClick={() => navigate(`/group/${groupID}`)}>{group?.members?.at(0)?.hasOwnProperty('email') ? 'View' : 'Join'}</Button>
       </CardActions>
     </Card>
   );
