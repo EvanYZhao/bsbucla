@@ -65,7 +65,7 @@ socketIO.on('connection', async (socket) => {
     console.log(out);
 
     // Save to chatroom logs
-    const newMessage = { _id: new ObjectId(), userId: user.uid, message, reactions: [] };
+    const newMessage = { _id: new ObjectId(Date.now()), userId: user.uid, message, reactions: [] };
     chatroom.messages.push(newMessage);
     await chatroom.save();
     
