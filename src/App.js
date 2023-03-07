@@ -9,6 +9,7 @@ import CreateGroupPage from "./pages/CreateGroupPage";
 import CoursePage from "./pages/CoursePage";
 import TestingPage from "./ENDPOINT_TESTING/Testing";
 import Navbar from "./components/Navbar";
+import SocketChatPage from "./ENDPOINT_TESTING/SocketChat";
 
 function App() {
   return (
@@ -58,6 +59,13 @@ function App() {
             }
           />
           <Route
+            path="/course/:id"
+            element={
+              <Protected>
+              </Protected>
+            }
+          />
+          <Route
             path="/testing"
             element={
               <Protected>
@@ -66,9 +74,10 @@ function App() {
             }
           />
           <Route
-            path="/course/:id"
+            path="/chat"
             element={
               <Protected>
+                <SocketChatPage />
               </Protected>
             }
           />
