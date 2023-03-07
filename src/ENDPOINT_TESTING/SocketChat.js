@@ -3,11 +3,7 @@ import { useState, useEffect, useId } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
-<<<<<<< HEAD
-const socketPath = 'https://bsbucla-chatsocket-production.up.railway.app:3002'
-=======
-const socketPath = 'bsbucla-chatsocket-production.up.railway.app'
->>>>>>> fcea6ae4cb5e50337e1f211cb0bd558f2c7d9fab
+const socketPath = 'https://bsbucla-chat.up.railway.app'
 
 export default function SocketChatPage() {
   const { user } = UserAuth();
@@ -47,7 +43,7 @@ export default function SocketChatPage() {
 
         <Button onClick={(e) => {
           if (!socket && groupId !== '') {
-            setSocket(socketIO.connect(socketPath, { query: { token: user.accessToken, groupId } }));
+            setSocket(socketIO(socketPath, { query: { token: user.accessToken, groupId }, transports: ['websocket', 'polling', 'flashsocket']}));
           }
         }}>
           Connect to Socket
