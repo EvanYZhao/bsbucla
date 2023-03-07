@@ -1,21 +1,23 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const http = require('http').Server(app);
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
 const verifyToken = require('../Firebase/firebaseAdmin');
 const axios = require('axios');
-const { PORT } = require('../Requests/Server');
+require('../MongoDB');
 
 const { ObjectId } = require('mongodb');
 const { ChatroomModel } = require('../Models');
 
-const CHATPORT = 3002;
-app.use(cors());
+const socketIO = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
 
-const socketIO = require('socket.io')(http, {
-    cors: {
-        origin: "*"
-    }
+const CHATPORT = process.env.PORT || 3001;
+server.listen(CHATPORT, () => {
+  console.log(`ChatSocket started on ${CHATPORT}.`);
 });
 
 socketIO.on('connection', async (socket) => {
@@ -29,7 +31,7 @@ socketIO.on('connection', async (socket) => {
 
   // Check if user in group
   const groupId = socket.handshake.query.groupId;
-  const group = await axios.get('http://0.0.0.0:' + PORT + '/getGroupById', { headers: { Authorization: 'Bearer ' + token }, params: {id: groupId}})
+  const group = await axios.get('https://bsbucla-requests.up.railway.app/getGroupById', { headers: { Authorization: 'Bearer ' + token }, params: {id: groupId}})
     .then(group => {
       return group.data;
     })
@@ -75,10 +77,6 @@ socketIO.on('connection', async (socket) => {
     console.log('🔥: A user disconnected');
     socket.disconnect();
   });
-});
-
-http.listen(CHATPORT, () => {
-  console.log(`ChatSocket started on ${CHATPORT}.`);
 });
 
 module.exports = socketIO;

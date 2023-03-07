@@ -3,7 +3,7 @@ import { useState, useEffect, useId } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
-const socketPath = 'bsbucla-chatsocket-production.up.railway.app'
+const socketPath = 'https://bsbucla-chat.up.railway.app'
 
 export default function SocketChatPage() {
   const { user } = UserAuth();
@@ -43,7 +43,7 @@ export default function SocketChatPage() {
 
         <Button onClick={(e) => {
           if (!socket && groupId !== '') {
-            setSocket(socketIO.connect(socketPath, { query: { token: user.accessToken, groupId } }));
+            setSocket(socketIO(socketPath, { query: { token: user.accessToken, groupId }, transports: ['websocket', 'polling', 'flashsocket']}));
           }
         }}>
           Connect to Socket
@@ -62,7 +62,7 @@ export default function SocketChatPage() {
         </Button>
         <ul>
           {
-            messages.map(m => <li id={IDgen}>{m.message}</li>)
+            messages.map(m => <li key={IDgen}>{m.message}</li>)
           }
         </ul>
         
