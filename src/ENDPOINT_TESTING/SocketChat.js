@@ -4,6 +4,7 @@ import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
 const socketPath = 'bsbucla-chatsocket-production.up.railway.app'
+<<<<<<< HEAD
 
 export default function SocketChatPage() {
   const { user } = UserAuth();
@@ -76,6 +77,8 @@ import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
 const socketPath = 'http://localhost:3002'
+=======
+>>>>>>> fcea6ae (Added production urls)
 
 export default function SocketChatPage() {
   const { user } = UserAuth();
