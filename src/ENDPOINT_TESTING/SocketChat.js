@@ -35,8 +35,8 @@ export default function SocketChatPage() {
   });
 
   return(
-    <div class="flex justify-center">
-      <div class="flex flex-col w-1/3">
+    <div className="flex justify-center">
+      <div className="flex flex-col w-1/3">
         <input type="text" 
             value={groupId} 
             onChange={(e) => setGroupId(e.target.value)}/>

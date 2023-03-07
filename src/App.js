@@ -13,7 +13,7 @@ import SocketChatPage from "./ENDPOINT_TESTING/SocketChat";
 
 function App() {
   return (
-    <div class="flex flex-col h-screen">
+    <div className="flex flex-col h-screen">
       <AuthContextProvider>
         <Navbar/>
         <Routes>
