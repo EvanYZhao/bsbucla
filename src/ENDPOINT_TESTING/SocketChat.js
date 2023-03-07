@@ -3,7 +3,11 @@ import { useState, useEffect, useId } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
+<<<<<<< HEAD
 const socketPath = 'https://bsbucla-chatsocket-production.up.railway.app:3002'
+=======
+const socketPath = 'bsbucla-chatsocket-production.up.railway.app'
+>>>>>>> fcea6ae4cb5e50337e1f211cb0bd558f2c7d9fab
 
 export default function SocketChatPage() {
   const { user } = UserAuth();

@@ -1,6 +1,10 @@
 import Axios from "axios";
 
+<<<<<<< HEAD
 const BASEURL = "https://bsbucla-chatsocket-production.up.railway.app";
+=======
+const BASEURL = "bsbucla-chatsocket-production.up.railway.app";
+>>>>>>> fcea6ae4cb5e50337e1f211cb0bd558f2c7d9fab
 
 async function queryCoursePrefix(jwt, prefix) {
   const endpoint = BASEURL + "/getCoursesByPrefix";
