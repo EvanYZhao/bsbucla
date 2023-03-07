@@ -3,9 +3,9 @@ var app = express();
 var server = require('http').Server(app);
 const verifyToken = require('../Firebase/firebaseAdmin');
 const axios = require('axios');
+const { ObjectId } = require('mongodb'); 
 require('../MongoDB');
 
-const { ObjectId } = require('mongodb');
 const { ChatroomModel } = require('../Models');
 
 const socketIO = require("socket.io")(server, {
@@ -65,7 +65,8 @@ socketIO.on('connection', async (socket) => {
     console.log(out);
 
     // Save to chatroom logs
-    const newMessage = { _id: ObjectId(), userId: user.uid, message, reactions: [] };
+    const newId = new ObjectId();
+    const newMessage = { _id: newId, userId: user.uid, message, reactions: [] };
     chatroom.messages.push(newMessage);
     await chatroom.save();
     

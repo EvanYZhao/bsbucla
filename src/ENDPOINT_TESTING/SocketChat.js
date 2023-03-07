@@ -62,7 +62,7 @@ export default function SocketChatPage() {
         </Button>
         <ul>
           {
-            messages.map(m => <li key={IDgen}>{m.message} {new Date(parseInt(m._id.substring(0, 8), 16)).toLocaleString('en-US')}</li>)
+            messages.map(m => <li key={IDgen}>{m.message} {(new Date(parseInt(m._id.substring(0,8), 16)*1000)).toLocaleString()}</li>)
           }
         </ul>
         
