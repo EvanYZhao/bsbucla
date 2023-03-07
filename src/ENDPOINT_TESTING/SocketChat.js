@@ -12,6 +12,7 @@ export default function SocketChatPage() {
   const [socket, setSocket] = useState(null);
 
   const [messages, setMessages] = useState([]);
+  const [members, setMembers] = useState([]);
 
   const IDgen = useId();
 
@@ -32,7 +33,14 @@ export default function SocketChatPage() {
     socket?.on('s_failed_connect', () => {
       setSocket(null);
     })
-  });
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on('s_group_members', data => {
+      console.log(data);
+      setMembers(data);
+    });
+  }, [socket])
 
   return(
     <div className="flex justify-center">
@@ -62,7 +70,12 @@ export default function SocketChatPage() {
         </Button>
         <ul>
           {
-            messages.map(m => <li key={IDgen}>{m.message} {(new Date(parseInt(m._id.substring(0,8), 16)*1000)).toLocaleString()}</li>)
+            messages.map(m => <li key={IDgen}>
+              {(new Date(parseInt(m._id.substring(0,8), 16)*1000)).toLocaleString()}
+              <br/>
+              {members.filter(mem => mem.firebaseId == m.userId)[0].name}: {m.message}
+              <br/><br/>
+              </li>)
           }
         </ul>
         

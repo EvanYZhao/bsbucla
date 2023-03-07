@@ -71,9 +71,9 @@ app.get('/getGroupById', async (req, res) => {
   }
 
   const memberList = [];
-  const limit = group.members.includes(user.firebaseId) ? {} : { email: 0, picture: 0, major: 0 };
+  const limit = group.members.includes(user.firebaseId) ? {} : { email: 0, picture: 0, major: 0, firebaseId: 0 };
   for (const memberId of group.members) {
-    const member = await UserModel.findOne({ firebaseId: memberId }, {...limit, _id: 0, firebaseId: 0, created: 0, groups: 0, __v: 0});
+    const member = await UserModel.findOne({ firebaseId: memberId }, {...limit, _id: 0, created: 0, groups: 0, __v: 0});
     memberList.push(member);
   }
 
