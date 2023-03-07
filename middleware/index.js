@@ -177,7 +177,7 @@ app.get('/createGroup', (req, res) => {
     const endpoint = BASEURL + '/createGroup';
     
     // Bad request
-    if (!(req.query.name && req.query.courseId && Object.keys(req.query).length === 2 && req.headers.jwttokenstring)) {
+    if (!(req.query.name && req.query.courseId && req.query.maxMembers && Object.keys(req.query).length === 3 && req.headers.jwttokenstring)) {
         res.status(400);
         res.send('400 Bad Request');
         return;
@@ -187,6 +187,30 @@ app.get('/createGroup', (req, res) => {
     const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
 
     Axios.get(updatedEndpoint, config)
+    .then((response) => {
+        res.status(response.status);
+        res.json(response.data);
+    })
+    .catch((err) => {
+        res.status(err.response.status);
+        res.json(err.response.data);
+    });
+});
+
+// Request to /getUserProfile
+app.get('/getUserProfile', (req, res) => {
+    const endpoint = BASEURL + '/getUserProfile';
+    
+    // Bad request
+    if (!(Object.keys(req.query).length === 0 && req.headers.jwttokenstring)) {
+        res.status(400);
+        res.send('400 Bad Request');
+        return;
+    }
+
+    const config = { headers: {jwttokenstring: req.headers.jwttokenstring}};
+
+    Axios.get(endpoint, config)
     .then((response) => {
         res.status(response.status);
         res.json(response.data);
