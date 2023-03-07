@@ -8,13 +8,13 @@ import { AuthContextProvider } from "./context/AuthContext";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import CoursePage from "./pages/CoursePage";
 import TestingPage from "./ENDPOINT_TESTING/Testing";
-import { CssBaseline } from "@mui/material";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
-      <CssBaseline />
+    <div class="flex flex-col h-screen">
       <AuthContextProvider>
+        <Navbar/>
         <Routes>
           <Route path="/" element={<SigninPage />} />
           <Route
@@ -50,10 +50,25 @@ function App() {
             }
           />
           <Route
-            path="/createGroup"
+            path="/group/:id"
             element={
               <Protected>
-                <CreateGroupPage />
+                <GroupPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/testing"
+            element={
+              <Protected>
+                <TestingPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/course/:id"
+            element={
+              <Protected>
               </Protected>
             }
           />
@@ -62,5 +77,4 @@ function App() {
     </>
   );
 }
-
 export default App;

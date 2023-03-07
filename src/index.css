@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+div.MuiAutocomplete-popper div { /* To get rid of the rounding applied by Mui-paper on the dropdown */
+    border-top-right-radius: 0px;
+    border-top-left-radius: 0px;
+  }
