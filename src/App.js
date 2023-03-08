@@ -72,6 +72,14 @@ function App() {
               </Protected>
             }
           />
+          <Route
+            path="/creategroup"
+            element={
+              <Protected>
+                <CreateGroupPage />
+              </Protected>
+            }
+          />
         </Routes>
       </AuthContextProvider>
     </div>
