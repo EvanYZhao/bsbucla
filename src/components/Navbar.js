@@ -45,7 +45,7 @@ export default function Navbar() {
     return (user ? 
     <header>
         <nav
-            class="grid
+            className="grid
                    grid-cols-3
                    w-full
                    py-4
@@ -56,24 +56,24 @@ export default function Navbar() {
                    h-16
                    "
         >
-            <div class="flex justify-start items-center">
+            <div className="flex justify-start items-center">
                 <IconButton
                     onClick={(e) => { navigate('/home') }}
                 >
-                    <img referrerpolicy="no-referrer" 
-                        class="object-scale-down 
+                    <img referrerPolicy="no-referrer" 
+                        className="object-scale-down 
                             h-10
                             " 
                         src={logos[0]}
                         alt="pfp"/>
                 </IconButton>
             </div>
-            <div class={"flex justify-center items-center " + (showSearch ? "invisible" : "invisible md:visible")}>
+            <div className={"flex justify-center items-center " + (showSearch ? "invisible" : "invisible md:visible")}>
             <SearchBar width={500}/>
             </div>
-            <div class="hidden w-full md:flex md:items-center md:w-auto flex justify-end h-100" id="menu">
+            <div className="hidden w-full md:flex md:items-center md:w-auto flex justify-end h-100" id="menu">
                 <ul
-                    class="
+                    className="
                     pt-4
                     text-base text-gray-700
                     md:flex
@@ -90,8 +90,8 @@ export default function Navbar() {
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
                     >
-                        <img referrerpolicy="no-referrer" 
-                         class="object-scale-down 
+                        <img referrerPolicy="no-referrer" 
+                         className="object-scale-down 
                                 border-2
                                 border-white
                                 rounded-full 
@@ -140,7 +140,7 @@ export default function Navbar() {
                     
                         <MenuItem onClick={handleClose} style={{ justifyContent: 'center'}}>
                         <img referrerpolicy="no-referrer" 
-                         class="object-scale-down 
+                         className="object-scale-down 
                                 rounded-full 
                                 h-8
                                 mr-3

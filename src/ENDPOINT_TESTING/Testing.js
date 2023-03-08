@@ -20,8 +20,8 @@ export default function TestingPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (courseId !== '' && courseId) {
-        const data = await queryCourseFromId(courseId, user.accessToken);
-        const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+        const data = await queryCourseFromId(user.accessToken, courseId);
+        const groups = await queryGroupsFromCourseId(user.accessToken, courseId);
         setCourse(data);
         setGroups(groups);
       }
@@ -35,20 +35,20 @@ export default function TestingPage() {
   const joinButtonHandler = async () => {
     // Old member
     if (group?.members[0].hasOwnProperty('email')) {
-      await leaveGroupById(groupId, user.accessToken);
+      await leaveGroupById(user.accessToken, groupId);
     }
     // New member
     else {
-      await joinGroupById(groupId, user.accessToken);
+      await joinGroupById(user.accessToken, groupId);
     }
 
     // Update data
-    queryGroupFromId(groupId, user?.accessToken)
+    queryGroupFromId(user?.accessToken, groupId)
     .then(data => setGroup(data))
     .catch((err) => setGroup(undefined))
 
-    const data = await queryCourseFromId(courseId, user.accessToken);
-    const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+    const data = await queryCourseFromId(user.accessToken, courseId);
+    const groups = await queryGroupsFromCourseId(user.accessToken, courseId);
     setCourse(data);
     setGroups(groups);
   }
@@ -103,17 +103,19 @@ export default function TestingPage() {
         e.preventDefault();
         const name = e.target.name.value;
         const courseId = e.target.courseId.value;
+        const maxMembers = e.target.maxMembers.value;
 
-        if (name !== '' && courseId !== '') {
-          await createGroup(name, courseId, user.accessToken);
-          const data = await queryCourseFromId(courseId, user.accessToken);
-          const groups = await queryGroupsFromCourseId(courseId, user.accessToken);
+        if (name !== '' && courseId !== '' && maxMembers >= 0) {
+          await createGroup(user.accessToken, name, courseId, maxMembers);
+          const data = await queryCourseFromId(user.accessToken, courseId);
+          const groups = await queryGroupsFromCourseId(user.accessToken,courseId);
           setCourse(data);
           setGroups(groups);
         }
       }}>
         <label>Name: </label><input id="name" type="text"></input>
         <label>CourseId: </label><input id="courseId" type="text"></input>
+        <label>MaxMembers: </label><input id="maxMembers" type="number" defaultValue="0"></input>
         <input type="submit" value="Submit" />
       </form>
       <br/>
@@ -129,7 +131,7 @@ export default function TestingPage() {
         e.preventDefault();
         const value = e.target.groupId.value;
         if (value !== '') {
-          queryGroupFromId(value, user?.accessToken)
+          queryGroupFromId(user?.accessToken, value)
           .then(data => setGroup(data))
           .catch((err) => {setGroup(undefined); console.log(err)})
         }
