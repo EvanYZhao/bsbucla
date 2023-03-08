@@ -6,7 +6,6 @@ export default function CreateGroup() {
 
     function getData(val)
     {
-      console.warn(val.target.value)
       setData(val.target.value)
       setPrint(false)
     }
