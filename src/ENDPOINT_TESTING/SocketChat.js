@@ -73,7 +73,7 @@ export default function SocketChatPage() {
             messages.map(m => <li key={IDgen}>
               {(new Date(parseInt(m._id.substring(0,8), 16)*1000)).toLocaleString()}
               <br/>
-              {members.filter(mem => mem.firebaseId == m.userId)[0].name}: {m.message}
+              {members.filter(mem => mem.firebaseId == m.userId)[0]?.name}: {m.message}
               <br/><br/>
               </li>)
           }
