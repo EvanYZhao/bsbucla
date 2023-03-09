@@ -48,6 +48,7 @@ function useIntersection(element, rootMargin)  {
 function Message({messageObject, members, userId, fixAuthorCase = true}) {
   const authorIsUser = messageObject.userId === userId;
   const [color, setColor] = useState(null);
+  const [colorName, setColorName] = useState(null);
   let author = '';
 
   if (!messageObject.hideAuthor) {
@@ -70,14 +71,10 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
   Tailwind CSS processing?
   */
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const col = COLORS[members.map(mem => mem.firebaseId).indexOf(userId)]
-      setColor(authorIsUser ? 'bg-lime-200 ' : `bg-${col}-200 `);
-    }, 10);
-
-    return () => clearTimeout(timer);
+    setColorName(COLORS[members.map(mem => mem.firebaseId).indexOf(userId)])
+    setColor(authorIsUser ? 'bg-lime-200 ' : `bg-${colorName}-200 `);
     
-  }, [userId])
+  }, [color, colorName, userId])
 
   // Eggert time god
   const hours = messageObject.date.getHours() % 12 || 12;
