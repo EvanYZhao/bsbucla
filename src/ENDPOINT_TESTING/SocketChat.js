@@ -1,27 +1,80 @@
 import { Button } from "@mui/material";
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
-const socketPath = 'https://bsbucla-chat.up.railway.app'
+const socketPath = 'https://bsbucla-chat.up.railway.app';
 
-function Message({messageObject, members, userId}) {
-  const IDgen = useId();
+function useIntersection(element, rootMargin)  {
+  const [isVisible, setState] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setState(entry.isIntersecting);
+      },
+      { rootMargin }
+    );
+
+    element.current && observer.observe(element.current);
+
+    return () => observer.unobserve(element.current);
+  }, []);
+
+  return isVisible;
+};
+
+function Message({messageObject, members, userId, fixAuthorCase = true}) {
   const authorIsUser = messageObject.userId === userId;
-  const author = authorIsUser ? 
-    'You'
+  let author = '';
+
+  if (!messageObject.hideAuthor) {
+    author = authorIsUser ? 
+    ''
     : 
     members.filter(mem => mem.firebaseId === messageObject.userId)[0]?.name
   ;
 
-  const bgColor = authorIsUser ? ' bg-lime-200' : ' bg-sky-200';
+  // Make only first letter of each name capitalized
+  if (fixAuthorCase && author !== '')
+    author = author?.split(' ').map(name => name[0].toUpperCase() + name.substring(1).toLowerCase()).join(' ');
+  }
+
+  const bgColor = authorIsUser ? 'bg-lime-200 ' : 'bg-sky-200 ';
+
+  // Eggert time god
+  const hours = messageObject.date.getHours() % 12 || 12;
+  const minutes = messageObject.date.getMinutes().toString().padStart(2, '0');
+  const timeSuffix = messageObject.date.getHours() < 12 ? 'AM' : 'PM';
+
+  // Side depending on authorIsUser
+  const authorSide = authorIsUser ? 'text-right ' : ' ';
+  const messageSide = authorIsUser ? 'order-last ml-auto ' : 'order-first ';
 
   return (
-    <li key={IDgen} className={'p-2' + bgColor}>
-      {(new Date(parseInt(messageObject._id.substring(0,8), 16)*1000)).toLocaleString()}
-      <br/>
-      {author}: {messageObject.message}
+    <>
+    { !messageObject.hideDay &&
+    <li className='text-center'>
+      {messageObject.date.toLocaleDateString('en-us', { weekday: 'long' })}, {messageObject.date.toLocaleDateString('en-us', { month: 'long' })} {messageObject.date.getDay()}
+      {messageObject.date.getFullYear() !== (new Date()).getFullYear() && (', ' + messageObject.date.getFullYear())}
     </li>
+    }
+    <li className='p-1 w-full'>
+      {/* Message author */}
+      <div className={'messageAuthor ' + authorSide}>
+        <p>
+        {author}
+        </p>
+      </div>
+        <div className={'max-w-[75%] w-fit break-words p-3 rounded-3xl ' + bgColor + messageSide}>
+          {messageObject.message}
+        </div>
+        <div className={'py-1 ' + authorSide}>
+        {!messageObject.hideTime && `${hours}:${minutes} ${timeSuffix}`}
+        </div>
+
+    </li>
+    </>
   )
 }
 
@@ -33,16 +86,86 @@ export default function SocketChatPage() {
 
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
+  
+  const lastMessageRef = useRef(null);
+  
+  const lastMessageVisible = useIntersection(lastMessageRef, '0px');
 
   // Receive chatroom log history on connection
   useEffect(() => {
-    socket?.on('s_history', data => setMessages(data));
+    socket?.on('s_history', messages => {
+      for (const [index, message] of messages.entries()) {
+        message.date = new Date(parseInt(message._id.substring(0,8), 16)*1000);
+        if (index > 0) {
+          if (messages[index-1].userId === message.userId) {
+            message.hideAuthor = true;
+            if (((messages[index-1].date.getTime() / 60000) | 0) === ((message.date.getTime() / 60000) | 0)) {
+              message.hideTime = true;
+            }
+            else {
+              message.hideTime = false;
+            }
+          }
+          else {
+            message.hideAuthor = false;
+            message.hideTime = false;
+          }
+          if (messages[index-1].date.toLocaleDateString() === message.date.toLocaleDateString()) {
+            message.hideDay = true; 
+          }
+          else {
+            message.hideDay = false;
+          }
+        }
+        else {
+          message.hideAuthor = false;
+          message.hideTime = false;
+          message.hideDay = false;
+        }
+      }
+      setTimeout(() => {
+        lastMessageRef.current?.scrollIntoView(true);
+      }, 10);
+      setMessages(messages);
+    });
   }, [socket]);
+
+  /*
+  We want to scroll the new message into view
+  if the user was already at the bottom.
+
+  If the user isn't at the bottom, they're probably
+  reading an old message and doesn't want to be
+  auto-scrolled to the new message
+  */
+  useEffect(() => {
+    if (lastMessageVisible) {
+      setTimeout(() => {
+        console.log('yes');
+        lastMessageRef.current?.scrollIntoView({behavior: 'smooth'});
+      }, 10);
+    }
+  }, [messages])
 
   // Receive new message object from server
   useEffect(() => {
-    socket?.on('s_message', data => {
-      setMessages([...messages, data]);
+    socket?.on('s_message', newMessage => {
+      newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
+      if (messages.length > 0) {
+        if (messages.at(-1).userId === newMessage.userId) {
+          newMessage.hideAuthor = true;
+        }
+        else {
+          newMessage.hideAuthor = false;
+        }
+        if (messages.at(-1).date.toLocaleDateString() === newMessage.date.toLocaleDateString()) {
+          newMessage.hideDay = true;
+        }
+        else {
+          newMessage.hideDay = false;
+        }
+      }
+      setMessages([...messages, newMessage]);
     });
   }, [socket, messages]);
 
@@ -55,14 +178,13 @@ export default function SocketChatPage() {
 
   useEffect(() => {
     socket?.on('s_group_members', data => {
-      console.log(data);
       setMembers(data);
     });
   }, [socket])
 
   return(
-    <div className="flex justify-center">
-      <div className="flex flex-col w-1/3">
+    <div className="flex justify-center h-3/4">
+      <div className="flex flex-col w-1/2">
         <input type="text" 
             value={groupId} 
             onChange={(e) => setGroupId(e.target.value)}/>
@@ -86,11 +208,11 @@ export default function SocketChatPage() {
         }}>
           Send
         </Button>
-        <ul className="bg-slate-200 p-2">
+        <ul className="p-2 h-full overflow-y-scroll">
           {
             messages.map(messageObject => {
               return (
-                <Message 
+                <Message key={messageObject._id}
                   messageObject={messageObject} 
                   members={members} 
                   userId={user.uid}
@@ -98,6 +220,7 @@ export default function SocketChatPage() {
               )
             })
           }
+          <div ref={lastMessageRef}></div>
         </ul>
         
       </div>
