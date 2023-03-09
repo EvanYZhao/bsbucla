@@ -5,6 +5,27 @@ import { UserAuth } from "../context/AuthContext";
 
 const socketPath = 'https://bsbucla-chat.up.railway.app';
 
+/*
+!!!!!!!!!!!!!!!!!!!!!!!!!!!
+THIS WILL CAUSE A BUG LATER
+IF MEMBER COUNT > 12
+!!!!!!!!!!!!!!!!!!!!!!!!!!!
+*/
+const COLORS = [
+  'sky',
+  'orange',
+  'blue',
+  'indigo',
+  'red',
+  'violet',
+  'green',
+  'fuchsia',
+  'yellow',
+  'pink',
+  'teal',
+  'rose'
+]
+
 function useIntersection(element, rootMargin)  {
   const [isVisible, setState] = useState(false);
 
@@ -26,6 +47,7 @@ function useIntersection(element, rootMargin)  {
 
 function Message({messageObject, members, userId, fixAuthorCase = true}) {
   const authorIsUser = messageObject.userId === userId;
+  const [color, setColor] = useState(null);
   let author = '';
 
   if (!messageObject.hideAuthor) {
@@ -40,7 +62,22 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
     author = author?.split(' ').map(name => name[0].toUpperCase() + name.substring(1).toLowerCase()).join(' ');
   }
 
-  const bgColor = authorIsUser ? 'bg-lime-200 ' : 'bg-sky-200 ';
+  /*
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  COLOR BUG
+  Sometimes the color isn't rendered
+  May be due to a caching issue with
+  Tailwind CSS processing?
+  */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const col = COLORS[members.map(mem => mem.firebaseId).indexOf(userId)]
+      setColor(authorIsUser ? 'bg-lime-200 ' : `bg-${col}-200 `);
+    }, 10);
+
+    return () => clearTimeout(timer);
+    
+  }, [userId])
 
   // Eggert time god
   const hours = messageObject.date.getHours() % 12 || 12;
@@ -66,7 +103,7 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
         {author}
         </p>
       </div>
-        <div className={'max-w-[75%] w-fit break-words p-3 rounded-3xl ' + bgColor + messageSide}>
+        <div className={'max-w-[75%] w-fit break-words p-3 rounded-3xl ' + color + messageSide}>
           {messageObject.message}
         </div>
         <div className={'py-1 ' + authorSide}>
