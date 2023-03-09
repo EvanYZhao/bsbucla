@@ -5,6 +5,26 @@ import { UserAuth } from "../context/AuthContext";
 
 const socketPath = 'https://bsbucla-chat.up.railway.app'
 
+function Message({messageObject, members, userId}) {
+  const IDgen = useId();
+  const authorIsUser = messageObject.userId === userId;
+  const author = authorIsUser ? 
+    'You'
+    : 
+    members.filter(mem => mem.firebaseId === messageObject.userId)[0]?.name
+  ;
+
+  const bgColor = authorIsUser ? ' bg-lime-200' : ' bg-sky-200';
+
+  return (
+    <li key={IDgen} className={'p-2' + bgColor}>
+      {(new Date(parseInt(messageObject._id.substring(0,8), 16)*1000)).toLocaleString()}
+      <br/>
+      {author}: {messageObject.message}
+    </li>
+  )
+}
+
 export default function SocketChatPage() {
   const { user } = UserAuth();
   const [groupId, setGroupId] = useState('');
@@ -13,8 +33,6 @@ export default function SocketChatPage() {
 
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
-
-  const IDgen = useId();
 
   // Receive chatroom log history on connection
   useEffect(() => {
@@ -68,14 +86,17 @@ export default function SocketChatPage() {
         }}>
           Send
         </Button>
-        <ul>
+        <ul className="bg-slate-200 p-2">
           {
-            messages.map(m => <li key={IDgen}>
-              {(new Date(parseInt(m._id.substring(0,8), 16)*1000)).toLocaleString()}
-              <br/>
-              {members.filter(mem => mem.firebaseId == m.userId)[0]?.name}: {m.message}
-              <br/><br/>
-              </li>)
+            messages.map(messageObject => {
+              return (
+                <Message 
+                  messageObject={messageObject} 
+                  members={members} 
+                  userId={user.uid}
+                />
+              )
+            })
           }
         </ul>
         
