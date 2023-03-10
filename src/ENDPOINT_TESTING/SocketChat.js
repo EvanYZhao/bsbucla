@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
 
@@ -62,20 +62,10 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
     author = author?.split(' ').map(name => name[0].toUpperCase() + name.substring(1).toLowerCase()).join(' ');
   }
 
-  /*
-  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  COLOR BUG
-  Sometimes the color isn't rendered
-  May be due to a caching issue with
-  Tailwind CSS processing?
-  */
   useEffect(() => {
-    setTimeout(() => {
-      const colorName = COLORS[members.map(mem => mem.firebaseId).indexOf(userId)];
-      setColor(authorIsUser ? '#d9f99d' : colorName);
-    }, 100);
-    
-  }, [userId])
+    const colorName = COLORS[members.map(mem => mem.firebaseId).indexOf(userId)];
+    setColor(authorIsUser ? '#d9f99d' : colorName);
+  }, [members, userId])
 
   // Eggert time god
   const hours = messageObject.date.getHours() % 12 || 12;
@@ -83,7 +73,7 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
   const timeSuffix = messageObject.date.getHours() < 12 ? 'AM' : 'PM';
 
   // Side depending on authorIsUser
-  const authorSide = authorIsUser ? 'text-right ' : ' ';
+  const authorSide = authorIsUser ? 'text-right ' : '';
   const messageSide = authorIsUser ? 'order-last ml-auto ' : 'order-first ';
 
   return (
@@ -106,7 +96,6 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
         </div>
         <div className={'py-1 ' + authorSide}>
         {!messageObject.hideTime && `${hours}:${minutes} ${timeSuffix}`}
-        {(messageObject.date.getTime() / 60000) | 0}
         </div>
 
     </li>
@@ -126,6 +115,8 @@ export default function SocketChatPage() {
   const lastMessageRef = useRef(null);
   
   const lastMessageVisible = useIntersection(lastMessageRef, '0px');
+
+  const socketRef = useRef(socket);
 
   // Receive chatroom log history on connection
   useEffect(() => {
@@ -180,38 +171,53 @@ export default function SocketChatPage() {
         lastMessageRef.current?.scrollIntoView({behavior: 'smooth'});
       }, 10);
     }
-  }, [messages])
+  }, [messages]);
 
   useEffect(() => {
-    // Receive new message object from server
-  socket?.once('s_message', newMessage => {
-    console.log(newMessage.message);
-    newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
-    if (messages.length > 0) {
-      if (messages.at(messages.length - 1).userId === newMessage.userId) {
-        newMessage.hideAuthor = true;
-      }
-      else {
+      socket?.once('s_message', newMessage => {
+        const sameId = (message1, message2) => {
+          return message1.userId === message2.userId;
+        }
+
+        const sameMinute = (message1, message2) => {
+          const minute = (message) => {
+            return (message.date.getTime() / 60000) | 0
+          }
+          return minute(message1) === minute(message2);
+        }
+
+        const sameDay = (message1, message2) => {
+          const day = (message) => {
+            return message.date.toLocaleDateString();
+          }
+          return day(message1) === day(message2);
+        }
+
+        newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
         newMessage.hideAuthor = false;
-      }
-      if (messages.at(messages.length - 1).date.toLocaleDateString() === newMessage.date.toLocaleDateString()) {
-        newMessage.hideDay = true;
-      }
-      else {
         newMessage.hideDay = false;
-      }
-      newMessage.hideTime = false;
-      //console.log(messages.at(messages.length - 1).message);
-      if (((messages.at(messages.length - 1).date.getTime() / 60000) | 0) === ((newMessage.date.getTime() / 60000) | 0)) {
-        messages.at(messages.length - 1).hideTime = true;
-      }
-      else {
-        messages.at(messages.length - 1).hideTime = false;
-      }
-    }
-    setMessages([...messages, newMessage]);
-  });
-  }, [socket, messages])
+        newMessage.hideTime = false;
+
+        const lastMessage = messages.at(messages.length - 1);
+
+        // Check previous message for:
+        // Author, Time, Day
+        if (messages.length > 0) {
+          if (sameId(lastMessage, newMessage)) {
+            // Hide new message author if last message has same author
+            newMessage.hideAuthor = true;
+
+            // Hide last message time if new message is on same minute
+            lastMessage.hideTime = (sameMinute(lastMessage, newMessage));
+          }
+          
+          // Hide new message day if last message has same day
+          newMessage.hideDay = sameDay(lastMessage, newMessage);
+        }
+
+        setMessages([...messages, newMessage]);
+      });
+  }, [messages]);
 
   // Reset socket if failed to join chatroom
   useEffect(() => {
