@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useState, useEffect, useRef, useMemo } from "react";
 import socketIO from "socket.io-client"
 import { UserAuth } from "../context/AuthContext";
@@ -12,18 +12,18 @@ IF MEMBER COUNT > 12
 !!!!!!!!!!!!!!!!!!!!!!!!!!!
 */
 const COLORS = [
-  'sky',
-  'orange',
-  'blue',
-  'indigo',
-  'red',
-  'violet',
-  'green',
-  'fuchsia',
-  'yellow',
-  'pink',
-  'teal',
-  'rose'
+  '#bae6fd',
+  '#fed7aa',
+  '#bfdbfe',
+  '#c7d2fe',
+  '#fecaca',
+  '#ddd6fe',
+  '#bbf7d0',
+  '#f5d0fe',
+  '#fef08a',
+  '#fbcfe8',
+  '#99f6e4',
+  '#fecdd3'
 ]
 
 function useIntersection(element, rootMargin)  {
@@ -48,7 +48,6 @@ function useIntersection(element, rootMargin)  {
 function Message({messageObject, members, userId, fixAuthorCase = true}) {
   const authorIsUser = messageObject.userId === userId;
   const [color, setColor] = useState(null);
-  const [colorName, setColorName] = useState(null);
   let author = '';
 
   if (!messageObject.hideAuthor) {
@@ -71,10 +70,12 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
   Tailwind CSS processing?
   */
   useEffect(() => {
-    setColorName(COLORS[members.map(mem => mem.firebaseId).indexOf(userId)])
-    setColor(authorIsUser ? 'bg-lime-200 ' : `bg-${colorName}-200 `);
+    setTimeout(() => {
+      const colorName = COLORS[members.map(mem => mem.firebaseId).indexOf(userId)];
+      setColor(authorIsUser ? '#d9f99d' : colorName);
+    }, 100);
     
-  }, [color, colorName, userId])
+  }, [userId])
 
   // Eggert time god
   const hours = messageObject.date.getHours() % 12 || 12;
@@ -100,11 +101,12 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
         {author}
         </p>
       </div>
-        <div className={'max-w-[75%] w-fit break-words p-3 rounded-3xl ' + color + messageSide}>
+        <div style={{backgroundColor: color}}className={'max-w-[75%] w-fit break-words p-3 rounded-3xl ' + messageSide}>
           {messageObject.message}
         </div>
         <div className={'py-1 ' + authorSide}>
         {!messageObject.hideTime && `${hours}:${minutes} ${timeSuffix}`}
+        {(messageObject.date.getTime() / 60000) | 0}
         </div>
 
     </li>
@@ -175,33 +177,41 @@ export default function SocketChatPage() {
   useEffect(() => {
     if (lastMessageVisible) {
       setTimeout(() => {
-        console.log('yes');
         lastMessageRef.current?.scrollIntoView({behavior: 'smooth'});
       }, 10);
     }
   }, [messages])
 
-  // Receive new message object from server
   useEffect(() => {
-    socket?.on('s_message', newMessage => {
-      newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
-      if (messages.length > 0) {
-        if (messages.at(-1).userId === newMessage.userId) {
-          newMessage.hideAuthor = true;
-        }
-        else {
-          newMessage.hideAuthor = false;
-        }
-        if (messages.at(-1).date.toLocaleDateString() === newMessage.date.toLocaleDateString()) {
-          newMessage.hideDay = true;
-        }
-        else {
-          newMessage.hideDay = false;
-        }
+    // Receive new message object from server
+  socket?.once('s_message', newMessage => {
+    console.log(newMessage.message);
+    newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
+    if (messages.length > 0) {
+      if (messages.at(messages.length - 1).userId === newMessage.userId) {
+        newMessage.hideAuthor = true;
       }
-      setMessages([...messages, newMessage]);
-    });
-  }, [socket, messages]);
+      else {
+        newMessage.hideAuthor = false;
+      }
+      if (messages.at(messages.length - 1).date.toLocaleDateString() === newMessage.date.toLocaleDateString()) {
+        newMessage.hideDay = true;
+      }
+      else {
+        newMessage.hideDay = false;
+      }
+      newMessage.hideTime = false;
+      //console.log(messages.at(messages.length - 1).message);
+      if (((messages.at(messages.length - 1).date.getTime() / 60000) | 0) === ((newMessage.date.getTime() / 60000) | 0)) {
+        messages.at(messages.length - 1).hideTime = true;
+      }
+      else {
+        messages.at(messages.length - 1).hideTime = false;
+      }
+    }
+    setMessages([...messages, newMessage]);
+  });
+  }, [socket, messages])
 
   // Reset socket if failed to join chatroom
   useEffect(() => {
@@ -231,17 +241,6 @@ export default function SocketChatPage() {
           Connect to Socket
         </Button>
 
-        <input type="text" 
-            value={message} 
-            onChange={(e) => setMessage(e.target.value)}/>
-
-        <Button onClick={(e) => {
-          if (socket) {
-            socket.emit('c_message', message);
-          }
-        }}>
-          Send
-        </Button>
         <ul className="p-2 h-full overflow-y-scroll">
           {
             messages.map(messageObject => {
@@ -256,7 +255,24 @@ export default function SocketChatPage() {
           }
           <div ref={lastMessageRef}></div>
         </ul>
-        
+
+        <Button onClick={(e) => {
+          if (socket && message !== '') {
+            socket.emit('c_message', message);
+            setMessage('');
+          }
+        }}>
+          Send
+        </Button>
+        <TextField
+          id="filled-multiline-static"
+          label="Message"
+          multiline
+          rows={4}
+          variant="filled"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
       </div>
     </div>
   )
