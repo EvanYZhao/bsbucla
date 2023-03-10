@@ -28,7 +28,7 @@ export default function Homepage() {
 
   return (
     
-    <div class="bg-slate-100 h-full flex flex-col items-center" >
+    <div class="bg-slate-100 h-full flex flex-col items-center gradient">
       <div id="navTitle"
            class="w-full
                   h-20
@@ -43,14 +43,12 @@ export default function Homepage() {
       </div>
       
       <div class="grid grid-cols-2 w-full px-24">
-      <div class="flex flex-col space-y-6 items-center">
-        <Typography  variant="h5">
+        <div class="flex flex-col space-y-6 items-center chatbox">
           Column 1 (Maybe Chatbox?)
-          </Typography>
         </div>
-        <div class="flex flex-col space-y-6 items-center">
+        <div class="flex flex-col space-y-6 items-center groupbox">
           <Typography variant="h5">
-          GROUPS
+            GROUPS
           </Typography>
           <div class="w-1/2 space-y-4">
             {

@@ -55,7 +55,7 @@ export default function SigninPage() {
           <div class = 'centered' >
             
               <Container height = '10em' display =  'flex' align =  'center' justify-content ='center' >
-                <img src="https://i.imgur.com/ASEMnGG.png" alt="BSB" width = '100'/>
+                <img src="https://i.imgur.com/P06aj1I.png" alt="BSB" width = '100'/>
                 <img src="https://i.imgur.com/cvZnH8a.png" alt="Bruin Study Buddies" width = '450'/>
             
                 <GoogleButton onClick={handleSignIn} type = "light" />

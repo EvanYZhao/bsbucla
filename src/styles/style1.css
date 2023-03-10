@@ -8,6 +8,9 @@ html {
       background-image: linear-gradient(rgb(250, 213, 183), rgb(255, 255, 255));
     }
   
+    .gradient{
+      background-image: linear-gradient(rgb(189, 205, 225), rgb(189, 205, 225))
+    }
     .centered {
       
       position: absolute;
@@ -15,5 +18,27 @@ html {
       left: 50%;
       margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
       transform: translate(-50%, -50%);
+    }
+
+    .chatbox {
+      height: 900%;
+      width: 90%;
+      background-color: rgb(252, 247, 237);
+      box-shadow: 5px 5px 5px rgba(68, 75, 81, 0.2);
+      border-radius: 5px;
+      float: left;
+      margin: auto;
+
+    }
+
+    .groupbox {
+      background-color: rgb(252, 247, 237);
+      box-shadow: 5px 5px 5px rgba(49, 65, 79, 0.2);
+      border-radius: 5px;
+      
+      height: 900%;
+      width: 90%;
+      float: right;
+      margin: auto;
     }
   
