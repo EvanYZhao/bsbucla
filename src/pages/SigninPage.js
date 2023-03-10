@@ -20,7 +20,7 @@ import { PeopleAlt } from "@mui/icons-material";
 import { ClassNames } from "@emotion/react";
 
 
-const theme = createTheme();
+
 
 
 
@@ -55,7 +55,8 @@ export default function SigninPage() {
           <div class = 'centered' >
             
               <Container height = '10em' display =  'flex' align =  'center' justify-content ='center' >
-                <img src="https://i.imgur.com/cvZnH8a.png" alt="BSB" width = '450'/>
+                <img src="https://i.imgur.com/ASEMnGG.png" alt="BSB" width = '100'/>
+                <img src="https://i.imgur.com/cvZnH8a.png" alt="Bruin Study Buddies" width = '450'/>
             
                 <GoogleButton onClick={handleSignIn} type = "light" />
               </Container>
