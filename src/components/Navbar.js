@@ -46,8 +46,8 @@ export default function Navbar() {
     const [showSearch, setShowSearch] = useState(false);
     
     return (user ? 
-    <header>
-        <nav
+    <header >
+        <nav 
             className="grid
                    grid-cols-3
                    w-full
@@ -59,8 +59,8 @@ export default function Navbar() {
                    h-20
                    "
         >
-            <div className="flex justify-start items-center">
-                <IconButton
+            <div className="flex justify-start items-center" >
+                <IconButton 
                     onClick={(e) => { navigate('/home') }}
                 >
                     <img referrerPolicy="no-referrer" 
@@ -73,10 +73,10 @@ export default function Navbar() {
                 </IconButton>
             </div>
             <div className={"flex justify-center items-center " + (showSearch ? "invisible" : "invisible md:visible")}>
-            <SearchBar width={500}/>
+            <SearchBar  width={500}/>
             </div>
             <div className="hidden w-full md:flex md:items-center md:w-auto flex justify-end h-100" id="menu">
-                <ul
+                <ul 
                     className="
                     pt-4
                     text-base text-gray-700

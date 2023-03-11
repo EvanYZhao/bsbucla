@@ -28,7 +28,7 @@ export default function Homepage() {
 
   return (
     
-    <div class="bg-slate-100 h-full flex flex-col items-center gradient">
+    <div class="bg-slate-100 h-full flex flex-col items-center gradient" theme ={theme}>
       <div id="navTitle"
            class="w-full
                   h-20
@@ -37,18 +37,21 @@ export default function Homepage() {
                   items-center
            "
       >
-        <Typography fontfamily = "Helvetica Neue" fontSize = '1.9rem'>
-        <b>My Dashboard</b>
+        
+        <Typography fontFamily="Inder, sans-serif" fontSize = '4rem' color = "#738b95">
+        <b>BRUIN STUDY BUDDIES</b>
         </Typography>
       </div>
       
       <div class="grid grid-cols-2 w-full px-24">
         <div class="flex flex-col space-y-6 items-center chatbox">
-          Column 1 (Maybe Chatbox?)
+          <Typography variant="h5">
+            Chatbox
+          </Typography>
         </div>
         <div class="flex flex-col space-y-6 items-center groupbox">
           <Typography variant="h5">
-            GROUPS
+            Groups
           </Typography>
           <div class="w-1/2 space-y-4">
             {
