@@ -67,7 +67,7 @@ async function joinGroupById(jwt, groupId) {
       "Content-Type": "application/json",
     },
   };
-  const group = await Axios.patch(query, config);
+  const group = await Axios({method: 'patch', url: query, headers: config.headers});
 
   return group.data;
 }
@@ -81,7 +81,7 @@ async function leaveGroupById(jwt, groupId) {
       "Content-Type": "application/json",
     },
   };
-  const group = await Axios.patch(query, config);
+  const group = await Axios({method: 'patch', url: query, headers: config.headers});
 
   return group.data;
 }
@@ -95,7 +95,7 @@ async function createGroup(jwt, data) {
     },
     data
   };
-  const group = await Axios.post(endpoint, config);
+  const group = await Axios({method: 'post', url: endpoint, headers: config.headers, data: data});
 
   return group.data;
 }

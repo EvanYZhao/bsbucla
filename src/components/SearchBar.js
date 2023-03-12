@@ -160,9 +160,11 @@ export default function SearchBar({ setcourseid, ...props }) {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(`/course/${currentCourse._id}`, {
-      state: currentCourse,
-    });
+    if (props.debug == 'false') {
+      navigate(`/course/${currentCourse._id}`, {
+        state: currentCourse,
+      });
+    }
   };
 
   return (
@@ -200,7 +202,7 @@ export default function SearchBar({ setcourseid, ...props }) {
           setcourseid(value?._id);
           setCurrentCourse(value);
           setNoSelected(false);
-          if (value) {
+          if (value && props.debug == 'false') {
             navigate(`/course/${value?._id}`, {
               state: value,
             });
@@ -216,5 +218,6 @@ export default function SearchBar({ setcourseid, ...props }) {
 SearchBar.defaultProps = {
   width: 300,
   cachename: "labels",
+  debug: 'false',
   setcourseid: () => {},
 };
