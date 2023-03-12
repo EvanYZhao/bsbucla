@@ -9,7 +9,7 @@ app.get('/getCourseById', async (req, res) => {
 
   // Fetch Course
   const course = await CourseModel.findById(req.query.id, { __v: 0 })
-    .then(response => response)
+    .then(response)
     .catch(null);
 
   // Course with ID does not exist
@@ -93,7 +93,7 @@ app.get('/getGroupsByCourseId', async (req, res) => {
   const groups = await GroupModel.find({ courseId: req.query.id }, {__v: 0, created: 0, chatroomId: 0})
     .then(response => {
       if (response.length === 0)
-        return null;
+        return [];
       return response;
     })
     .catch(() => null);
