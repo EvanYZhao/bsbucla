@@ -159,7 +159,7 @@ app.post('/createGroup', async (req, res) => {
 
 app.patch('/joinGroupById', async (req, res) => {
   // Verify request
-  console.log(req);
+  console.log(req.headers);
   const user = await verifyRequestQuery(req, res, ['id']);
   if (!user) return false;
 
