@@ -84,6 +84,7 @@ app.get('/getGroupById', async (req, res) => {
 });
 
 app.get('/getGroupsByCourseId', async (req, res) => {
+  console.log(req.headers)
   // Verify request
   const user = await verifyRequestQuery(req, res, ['id']);
   if (!user) return false;
