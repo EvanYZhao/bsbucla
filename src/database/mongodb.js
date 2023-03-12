@@ -86,23 +86,16 @@ async function leaveGroupById(jwt, groupId) {
   return group.data;
 }
 
-async function createGroup(jwt, name, courseId, maxMembers = 0) {
+async function createGroup(jwt, data) {
   const endpoint = BASEURL + "/createGroup";
-  const query =
-    endpoint +
-    "?name=" +
-    name +
-    "&courseId=" +
-    courseId +
-    "&maxMembers=" +
-    maxMembers;
   const config = {
     headers: {
       Authorization: "Bearer " + jwt,
       "Content-Type": "application/json",
     },
+    data
   };
-  const group = await Axios.post(query, config);
+  const group = await Axios.post(endpoint, config);
 
   return group.data;
 }

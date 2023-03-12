@@ -14,6 +14,11 @@ const { UserModel } = require('../Models');
 async function verifyRequest (req, res) {
   // Verify user token with Firebase Admin
   let token = req.headers.authorization;
+  if (!token) {
+    res.status(401);
+    res.send('Unauthorized');
+    return false;
+  }
   if (token.length < 3) {
     res.status(401);
     res.send('Unauthorized');
