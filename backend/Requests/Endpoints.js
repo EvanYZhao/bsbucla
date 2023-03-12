@@ -9,7 +9,7 @@ app.get('/getCourseById', async (req, res) => {
 
   // Fetch Course
   const course = await CourseModel.findById(req.query.id, { __v: 0 })
-    .then(response)
+    .then(response => response)
     .catch(null);
 
   // Course with ID does not exist
@@ -37,9 +37,7 @@ app.get('/getCoursesByPrefix', async (req, res) => {
         { 'name': { $regex: prefix, $options: 'i'} },
       ]
     }, { __v: 0 })
-    .then((response) => {
-      return response;
-    })
+    .then(response => response)
     .catch((err) => {
       console.log(err);
       return null;
@@ -204,7 +202,7 @@ app.patch('/leaveGroupById', async (req, res) => {
   if (!user) return false;
 
   const group = await GroupModel.findById(req.query.id)
-    .then((response) => response)
+    .then(response => response)
     .catch(() => null);
 
   if (!group) {
