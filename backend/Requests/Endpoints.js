@@ -9,7 +9,7 @@ app.get('/getCourseById', async (req, res) => {
 
   // Fetch Course
   const course = await CourseModel.findById(req.query.id, { __v: 0 })
-    .then(response)
+    .then(response => response)
     .catch(null);
 
   // Course with ID does not exist
