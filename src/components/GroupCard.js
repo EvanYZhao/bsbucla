@@ -49,5 +49,3 @@ export default function GroupCard({ groupID }) {
   );
 }
 
-//do an onclick for the button to route to the group page?
-//would you need the group id too?
