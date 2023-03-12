@@ -38,10 +38,7 @@ app.get('/getCoursesByPrefix', async (req, res) => {
       ]
     }, { __v: 0 })
     .then(response => response)
-    .catch((err) => {
-      console.log(err);
-      return null;
-    });
+    .catch(e => null);
 
   if (!courses) {
     res.status(400);
@@ -134,6 +131,21 @@ app.post('/createGroup', async (req, res) => {
   const verify = await verifyRequestBody(req, res, GroupModel, ['name']);
   if (!verify) return false;
   const [user, groupDoc] = verify;
+
+  // Verify name
+  if (req.body.name === '') {
+    res.status(400);
+    res.send('Bad Request: invalid group name');
+    return;
+  }
+
+  // Verify course exists
+  const associatedCourse = await CourseModel.findById(req.body.courseId);
+  if (!associatedCourse) {
+    res.status(400);
+    res.send('Bad Request: invalid course id');
+    return;
+  }
 
   // Link User to Group
   groupDoc.set('members', [user.firebaseId]);

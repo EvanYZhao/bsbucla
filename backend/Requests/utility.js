@@ -16,19 +16,19 @@ async function verifyRequest (req, res) {
   let token = req.headers.authorization;
   if (!token) {
     res.status(401);
-    res.send('Unauthorized');
+    res.send('Unauthorized: no token');
     return false;
   }
   if (token.length < 3) {
     res.status(401);
-    res.send('Unauthorized');
+    res.send('Unauthorized: invalid token');
     return false;
   }
   token = token.split(' ')[1]
   const user = await verifyToken(token);
   if (!user) {
     res.status(401);
-    res.send('Unauthorized');
+    res.send('Unauthorized: invalid user');
     return false;
   }
 

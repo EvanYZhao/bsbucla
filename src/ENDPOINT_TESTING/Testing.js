@@ -1,4 +1,6 @@
+import { Button, FormControl, Input, InputLabel, TextField, Typography } from "@mui/material";
 import React, { useEffect, useId, useState } from "react";
+import GroupCard from "../components/GroupCard";
 import SearchBar from "../components/SearchBar";
 import SignOutButton from "../components/SignOutButton";
 import { UserAuth } from "../context/AuthContext";
@@ -13,197 +15,213 @@ import {
 
 export default function TestingPage() {
   const { user } = UserAuth();
-  const [courseId, setCourseId] = useState("");
-  const [course, setCourse] = useState({});
-  const [groups, setGroups] = useState([]);
-  const [groupId, setGroupId] = useState("");
-  const [group, setGroup] = useState(undefined);
+  const [courseIdPrefix, setCourseIdPrefix] = useState('');
+  const [courseByPrefix, setCourseByPrefix] = useState(null);
+  const [groupsPrefix, setGroupsPrefix] = useState([]);
+  
+  const [courseId, setCourseId] = useState('');
+  const [courseById, setCourseById] = useState(null);
+  const [groupsCourseId, setGroupsCourseId] = useState([]);
 
-  const id = useId(); // FOR MAP KEYS, handles child key error
+  const [groupId, setGroupId] = useState('');
+  const [group, setGroup] = useState(null);
+  const [courseGroupId, setCourseGroupId] = useState(null);
 
-  // Whenever a new course is selected
-  // Fetch the course information using courseId
-  // Fetch the course's basic groups info using courseId
+  const [groupName, setGroupName] = useState('');
+  const [groupDesc, setGroupDesc] = useState('');
+  const [groupCourseId, setGroupCourseId] = useState('');
+  const [groupMaxMembers, setGroupMaxMembers] = useState(0);
+  const [groupIdResp, setGroupIdResp] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
-      if (courseId !== "" && courseId) {
-        const data = await queryCourseFromId(user.accessToken, courseId);
-        const groups = await queryGroupsFromCourseId(
-          user.accessToken,
-          courseId
-        );
-        setCourse(data);
-        setGroups(groups);
+      const groups = await queryGroupsFromCourseId(user?.accessToken, courseIdPrefix);
+      setGroupsPrefix(groups);
+      const course = await queryCourseFromId(user?.accessToken, courseIdPrefix);
+      setCourseByPrefix(course);
+    }
+    if (courseIdPrefix)
+      fetchData();
+  }, [courseIdPrefix]);
+
+  const fetchCourseById = async (e) => {
+    e.preventDefault();
+    const course = await queryCourseFromId(user?.accessToken, courseId);
+    setCourseById(course);
+    const groups = await queryGroupsFromCourseId(user?.accessToken, courseId);
+    setGroupsPrefix(groups);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const groups = await queryGroupsFromCourseId(user?.accessToken, courseId);
+      setGroupsCourseId(groups);
+    }
+    if (courseById)
+      fetchData();
+  }, [courseById]);
+
+  const fetchGroupById = async (e) => {
+    e.preventDefault();
+    const group = await queryGroupFromId(user?.accessToken, groupId);
+    setGroup(group);
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const course = await queryCourseFromId(user?.accessToken, group.courseId);
+      setCourseGroupId(course);
+    }
+    if (group)
+      fetchData();
+  }, [group])
+
+  const joinGroup = async (e) => {
+    e.preventDefault();
+    await joinGroupById(user?.accessToken, groupId);
+    await fetchGroupById(e);
+  }
+  
+  const leaveGroup = async (e) => {
+    e.preventDefault();
+    await leaveGroupById(user?.accessToken, groupId);
+    setGroup(null);
+    if (group.courseId === courseIdPrefix) {
+      const groups = await queryGroupsFromCourseId(user?.accessToken, courseIdPrefix);
+      setGroupsPrefix(groups);
+    }
+  }
+
+  const createGroupHandler = async (e) => {
+    e.preventDefault();
+    const group = await createGroup(user?.accessToken, {name: groupName, desc: groupDesc, courseId: groupCourseId});
+    if (group) {
+      setGroupIdResp(group.groupId);
+      if (groupCourseId === courseIdPrefix) {
+        const groups = await queryGroupsFromCourseId(user?.accessToken, courseIdPrefix);
+        setGroupsPrefix(groups);
       }
-    };
-    fetchData();
-    console.log(user?.accessToken);
-  }, [courseId, user.accessToken, setCourse, setGroups]);
-
-  // This function will handle whether an old member wants to leave
-  // Or a new member wants to join
-  const joinButtonHandler = async () => {
-    // Old member
-    if (group?.members[0].hasOwnProperty("email")) {
-      await leaveGroupById(user.accessToken, groupId);
     }
-    // New member
-    else {
-      await joinGroupById(user.accessToken, groupId);
-    }
-
-    // Update data
-    queryGroupFromId(user?.accessToken, groupId)
-      .then((data) => setGroup(data))
-      .catch((err) => setGroup(undefined));
-
-    const data = await queryCourseFromId(user.accessToken, courseId);
-    const groups = await queryGroupsFromCourseId(user.accessToken, courseId);
-    setCourse(data);
-    setGroups(groups);
-  };
+  }
 
   return (
-    <div>
-      <h1>{user?.displayName}</h1>
-      <p>{user?.accessToken}</p>
-      <SignOutButton />
-      <br />
-      <SearchBar setcourseid={setCourseId} />
+    <div className="flex flex-col items-center">
+      {/* Course Search By Prefix Test */}
+      <div className="py-5 flex flex-col items-center space-y-5 bg-red-200 w-1/2">
+        <Typography variant='h4'>Course Search By Prefix</Typography>
+        <SearchBar setcourseid={setCourseIdPrefix} debug="true" />
+        {
+          courseByPrefix ? <>
+            <Typography variant='h5'>{courseByPrefix?.subjectLabel} {courseByPrefix?.number}: {courseByPrefix?.name}</Typography>
+            <Typography variant='h5'>CourseID: {courseIdPrefix}</Typography>
+            <Typography variant='h5'>Professors:</Typography>
+            <div className="flex flex-col items-center bg-fuchsia-200 w-1/2">
+              {
+                courseByPrefix?.professors?.map(prof => <Typography variant='h6'>{prof}</Typography>)
+              }
+            </div>
+            <Typography variant='h5'>Groups:</Typography>
+            {
+              groupsPrefix?.map(group => 
+                <div>
+                <Typography variant="h5">{group._id}</Typography>
+                <GroupCard groupID={group._id}/>
+                </div>)
+            }
+          </> : <></>
+        }
+      </div>
+      {/* Course Search By ID Test */}
+      <div className="py-5 flex flex-col items-center space-y-5 bg-yellow-200 w-1/2">
+        <Typography variant='h4'>Course Search By ID</Typography>
+        <form onSubmit={fetchCourseById} className="flex space-x-5">
+          <FormControl>
+              <InputLabel>Course ID</InputLabel>
+              <Input id="my-input" onChange={e => setCourseId(e.target.value)} />
+          </FormControl>
+          <Button variant="contained" type="submit">Search</Button>
+        </form>
+        {
+          courseById ? <>
+            <Typography variant='h5'>{courseById?.subjectLabel} {courseById?.number}: {courseById?.name}</Typography>
+            <Typography variant='h5'>Professors:</Typography>
+            <div className="flex flex-col items-center bg-orange-200 w-1/2">
+              {
+                courseById?.professors?.map(prof => <Typography variant='h6'>{prof}</Typography>)
+              }
+            </div>
+            <Typography variant='h5'>Groups:</Typography>
+            {
+              groupsCourseId?.map(group => <div>
+                <Typography variant="h5">{group._id}</Typography>
+                <GroupCard groupID={group._id}/>
+              </div>)
+            }
+          </> : <></>
+        }
+      </div>
 
-      {
-        // This section acts as a course description page
-        // redirected to after clicking the course in the search bar
-        // It will also contain a list of groups
-        // associated with that course (mappings below)
-      }
-      <h2>Selected Course:</h2>
-      <h3>Course ID: {courseId}</h3>
-      <h3>
-        Subject Area: {course?.subject} ({course?.subjectLabel})
-      </h3>
-      <h3>Course Number: {course?.number}</h3>
-      <h3>Course Name: {course?.name}</h3>
-      <h3>Available Groups ({groups.length ? groups.length : 0}):</h3>
+      {/* Group Search By ID Test */}
+      <div className="py-5 flex flex-col items-center space-y-5 bg-sky-200 w-1/2">
+        <Typography variant='h4'>Group Search By ID</Typography>
+        <form onSubmit={fetchGroupById} className="flex space-x-5">
+          <FormControl>
+              <InputLabel>Group ID</InputLabel>
+              <Input id="my-input" onChange={e => setGroupId(e.target.value)} />
+          </FormControl>
+          <Button variant="contained" type="submit">Search</Button>
+        </form>
+        {
+          group ? <>
+            <Typography variant='h5'>Group: {group.name}</Typography>
+            <Typography variant='h5'>{courseGroupId?.subjectLabel} {courseGroupId?.number}: {courseGroupId?.name}</Typography>
+            <Typography variant='h5'>Description: {group.description}</Typography>
+            <Typography variant='h5'>Members ({group.members.length}{group.maxMembers ? `/${group.maxMembers}` : ''})</Typography>
+            <div className="flex flex-col items-center bg-blue-300 w-1/2 space-y-10 p-5">
+              {
+                group?.members?.map(member => 
+                  <div className="flex flex-col w-3/4 items-center">
+                    { member.hasOwnProperty('picture') ? <img className="w-1/2" src={member.picture} referrerPolicy='no-referrer' /> : <></> }
+                    <Typography variant='h7'>{member.name}</Typography>
+                    { member.hasOwnProperty('email') ? <Typography variant='h7'>{member.email}</Typography> : <></> }
+                    { member.hasOwnProperty('major') && member.major !== '' ? <Typography variant='h7'>Major: {member.major}</Typography> : <></>}
+                  </div>
+                )
+              }
+            </div>
+            <Button variant="contained" onClick={group?.members[0].hasOwnProperty('email') ? leaveGroup : joinGroup}>
+              {group?.members[0].hasOwnProperty('email') ?  'Leave' : 'Join'}
+            </Button>
+          </> : <></>
+        }
+      </div>
 
-      {
-        // Each of these mappings can serve as a group card
-        // This displays basic group information (name, member count)
-        // The ID is only shown for test purposes, it will be passed in requests
-      }
-      {groups.map((group) => {
-        return (
-          <div key={group._id}>
-            <h4>Group ID: {group._id}</h4>
-            <h4>{group.name}</h4>
-            <h4>Members: {group.memberCount}</h4>
-          </div>
-        );
-      })}
-      <br />
-
-      {
-        // CREATE GROUP BASIC FORM
-        // This will create a new group with name and courseId
-      }
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const name = e.target.name.value;
-          const courseId = e.target.courseId.value;
-          const maxMembers = e.target.maxMembers.value;
-
-          if (name !== "" && courseId !== "" && maxMembers >= 0) {
-            await createGroup(user.accessToken, name, courseId, maxMembers);
-            const data = await queryCourseFromId(user.accessToken, courseId);
-            const groups = await queryGroupsFromCourseId(
-              user.accessToken,
-              courseId
-            );
-            setCourse(data);
-            setGroups(groups);
-          }
-        }}
-      >
-        <label>Name: </label>
-        <input id="name" type="text"></input>
-        <label>CourseId: </label>
-        <input id="courseId" type="text"></input>
-        <label>MaxMembers: </label>
-        <input id="maxMembers" type="number" defaultValue="0"></input>
-        <input type="submit" value="Submit" />
-      </form>
-      <br />
-
-      {
-        // This section essentially serves as clicking on the group card
-        // By clicking on a group card, you pass the group's ID to a request
-        // To populate a new page with the group's extended information
-      }
-      <h2>Check out group by ID</h2>
-
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const value = e.target.groupId.value;
-          if (value !== "") {
-            queryGroupFromId(user?.accessToken, value)
-              .then((data) => setGroup(data))
-              .catch((err) => {
-                setGroup(undefined);
-                console.log(err);
-              });
-          } else {
-            setGroup(undefined);
-          }
-        }}
-      >
-        <input
-          id="groupId"
-          type="text"
-          value={groupId}
-          onChange={(e) => setGroupId(e.target.value)}
-        ></input>
-        <button type="submit"> Submit </button>
-      </form>
-
-      {
-        // JOIN/LEAVE GROUP BUTTON BASIC
-        // This condition can be used to check if the user is in the group or not
-        // The backend hides this property if the user is not in the group
-        // The backend reveals this property if the user is in the group
-      }
-      <button onClick={joinButtonHandler}>
-        {group?.members[0].hasOwnProperty("email")
-          ? "Leave group"
-          : "Join group"}
-      </button>
-
-      {
-        // Extended group card
-        // This card visualizes the extended group information
-        // depending on whether the user is in the group or not
-        // Displays member name, picture, (email)?
-      }
-      <h3>Group Name: {group?.name}</h3>
-      <h3>Members:</h3>
-      {group?.members.map((member) => {
-        return (
-          <div key={id}>
-            <h4>{member.name}</h4>
-            {member.hasOwnProperty("email") ? <h5>{member.email}</h5> : <></>}
-            {member.hasOwnProperty("picture") ? (
-              <img
-                referrerpolicy="no-referrer"
-                src={member.picture}
-                alt="Pfp"
-              ></img>
-            ) : (
-              <></>
-            )}
-          </div>
-        );
-      })}
+      {/* Create Group Test */}
+      <div className="py-5 flex flex-col items-center space-y-5 bg-lime-200 w-1/2">
+        <Typography variant='h4'>Create Group</Typography>
+        <form onSubmit={createGroupHandler} className="flex flex-col space-y-5">
+          <FormControl>
+              <InputLabel>Group Name</InputLabel>
+              <Input onChange={e => setGroupName(e.target.value)} />
+          </FormControl>
+          <FormControl>
+              <InputLabel>Group Description</InputLabel>
+              <Input onChange={e => setGroupDesc(e.target.value)} />
+          </FormControl>
+          <FormControl>
+              <InputLabel>Course ID</InputLabel>
+              <Input onChange={e => setGroupCourseId(e.target.value)} />
+          </FormControl>
+          <FormControl>
+              <InputLabel>Max Members</InputLabel>
+              <Input onChange={e => setGroupMaxMembers(e.target.value)} type="number" value={groupMaxMembers}/>
+          </FormControl>
+          <Button variant="contained" type="submit">Create</Button>
+        </form>
+        {
+          groupIdResp ? <Typography variant='h6' className="text-center">New Group:<br/>{groupIdResp}</Typography> : <></>
+        }
+      </div>
     </div>
-  );
+  )
 }
