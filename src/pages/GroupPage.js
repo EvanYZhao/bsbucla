@@ -2,7 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-import { Button } from "@mui/material";
+import Button from '@mui/material-next/Button';
+//npm install /@mui/material-next
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
 
 export default function GroupPage() {
@@ -43,11 +46,24 @@ export default function GroupPage() {
     setCourse(data?.name);
   }
 
+  const theme = createTheme({
+  
+  });
+
+
+
   return (
-    <div>
-      <h3>Group Name: {group?.name}</h3>
-      <h3>Course: {course}</h3>
-      <h3>Members: </h3>
+    <div class="bg-slate-100 h-full flex flex-col items-center gradient" theme ={theme}>
+      <div >
+      <div style={{ marginBottom: '10px' }}>
+        <Typography fontFamily="Inder, sans-serif" fontSize="2rem" color="#738b95">Group Name:</Typography>
+        <Typography>{group?.name}</Typography>
+      </div>
+      
+      <div>
+        <Typography fontFamily="Inder, sans-serif" fontSize="2rem" color="#738b95">Course:</Typography>
+        <Typography>{course}</Typography>
+      </div>
       {group?.members.map(member => {
       return (
         <div key={id}>
@@ -57,7 +73,10 @@ export default function GroupPage() {
         </div>
       );
       })}
-      <Button onClick={joinButtonHandler}>{group?.members[0].hasOwnProperty('email') ? 'Leave group' : 'Join group'}</Button>
+      <div>
+        <Button size = "large" variant = "elevated" color = "#ffffff" onClick={joinButtonHandler}>{group?.members[0].hasOwnProperty('email') ? 'Leave group' : 'JOIN GROUP'}</Button>
+      </div>
+      </div>
     </div>
   );
 }

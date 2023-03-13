@@ -45,12 +45,12 @@ export default function Homepage() {
       
       <div class="grid grid-cols-2 w-full px-24">
         <div class="flex flex-col space-y-6 items-center chatbox">
-          <Typography variant="h5">
+          <Typography fontFamily="Inder, sans-serif" fontSize = '2rem' color = "#738b95">
             Chatbox
           </Typography>
         </div>
         <div class="flex flex-col space-y-6 items-center groupbox">
-          <Typography variant="h5">
+          <Typography fontFamily="Inder, sans-serif" fontSize = '2rem' color = "#738b95">
             Groups
           </Typography>
           <div class="w-1/2 space-y-4">

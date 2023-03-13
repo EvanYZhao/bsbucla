@@ -8,6 +8,8 @@ html {
     body {
       background-image: linear-gradient(rgb(250, 213, 183), rgb(255, 255, 255));
     }
+
+    
   
     .gradient{
       background-image: linear-gradient(#ADC4CE, #ADC4CE)
@@ -22,9 +24,9 @@ html {
     }
 
     .chatbox {
-      height: 800%;
+      height: 500%;
       width: 90%;
-      background-color: rgb(252, 247, 237);
+      background-color: #F1F0E8;
       box-shadow: 5px 5px 5px rgba(68, 75, 81, 0.2);
       border-radius: 5px;
       float: left;
@@ -33,11 +35,11 @@ html {
     }
 
     .groupbox {
-      background-color: rgb(252, 247, 237);
+      background-color: #F1F0E8;
       box-shadow: 5px 5px 5px rgba(49, 65, 79, 0.2);
       border-radius: 5px;
       
-      height: 800%;
+      height: 500%;
       width: 90%;
       float: right;
       margin: auto;
