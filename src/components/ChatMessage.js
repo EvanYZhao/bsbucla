@@ -50,7 +50,7 @@ export default function Message({messageObject, members, userId, fixAuthorCase =
       <>
       { !messageObject.hideDay &&
       <li className='text-center'>
-      {messageObject.date.toLocaleDateString('en-us', { weekday: 'long' })}, {messageObject.date.toLocaleDateString('en-us', { month: 'long' })} {messageObject.date.getDay()}
+      {messageObject.date.toLocaleDateString('en-us', { weekday: 'long' })}, {messageObject.date.toLocaleDateString('en-us', { month: 'long' })} {messageObject.date.getDate()}
       {messageObject.date.getFullYear() !== (new Date()).getFullYear() && (', ' + messageObject.date.getFullYear())}
       </li>
       }
