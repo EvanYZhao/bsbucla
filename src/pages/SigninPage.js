@@ -30,9 +30,8 @@ export default function SigninPage() {
 
 
   return (
-
-    <div>
-
+    <div class ="grad"> 
+      <div> 
           <div class = 'centered' >
             
               <Container height = '10em' display =  'flex' align =  'center' justify-content ='center' >
@@ -43,9 +42,8 @@ export default function SigninPage() {
               </Container>
            
 
+          </div>
         </div>
-
-   
     </div>
 
 
