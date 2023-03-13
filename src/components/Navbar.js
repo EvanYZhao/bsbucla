@@ -69,9 +69,9 @@ export default function Navbar() {
             <img
               referrerPolicy="no-referrer"
               className="object-scale-down 
-                            h-10
+                            h-12
                             "
-              src={logos[0]}
+              src={logos[2]}
               alt="pfp"
             />
           </IconButton>
