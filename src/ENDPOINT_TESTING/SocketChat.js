@@ -105,8 +105,8 @@ function Message({messageObject, members, userId, fixAuthorCase = true}) {
 
 export default function SocketChatPage() {
   const { user } = UserAuth();
-  const [groupId, setGroupId] = useState('');
-  const [message, setMessage] = useState('');
+  const [groupId, setGroupId] = useState("");
+  const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
 
   const [messages, setMessages] = useState([]);
@@ -221,16 +221,16 @@ export default function SocketChatPage() {
 
   // Reset socket if failed to join chatroom
   useEffect(() => {
-    socket?.on('s_failed_connect', () => {
+    socket?.on("s_failed_connect", () => {
       setSocket(null);
-    })
+    });
   }, [socket]);
 
   useEffect(() => {
     socket?.on('s_group_members', data => {
       setMembers(data);
     });
-  }, [socket])
+  }, [socket]);
 
   return(
     <div className="flex justify-center h-3/4">
@@ -239,11 +239,18 @@ export default function SocketChatPage() {
             value={groupId} 
             onChange={(e) => setGroupId(e.target.value)}/>
 
-        <Button onClick={(e) => {
-          if (!socket && groupId !== '') {
-            setSocket(socketIO(socketPath, { query: { token: user.accessToken, groupId }, transports: ['websocket', 'polling', 'flashsocket']}));
-          }
-        }}>
+        <Button
+          onClick={(e) => {
+            if (!socket && groupId !== "") {
+              setSocket(
+                socketIO(socketPath, {
+                  query: { token: user.accessToken, groupId },
+                  transports: ["websocket", "polling", "flashsocket"],
+                })
+              );
+            }
+          }}
+        >
           Connect to Socket
         </Button>
 
@@ -281,5 +288,5 @@ export default function SocketChatPage() {
         />
       </div>
     </div>
-  )
+  );
 }
