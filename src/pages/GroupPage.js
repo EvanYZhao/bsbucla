@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-import { createTheme} from '@mui/material/styles';
+import { createTheme,  } from '@mui/material/styles';
 import { Button } from "@mui/material";
 import {
   queryCourseFromId,
