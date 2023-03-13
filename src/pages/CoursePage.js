@@ -16,14 +16,9 @@ export default function CoursePage() {
   useEffect(() => {
     const fetchData = async () => {
       if (id !== "" && id) {
-        await queryGroupsFromCourseId(user.accessToken, id)
-          .then((groups) => {
-            setGroups(groups);
-          })
-          .catch(() => {
-            console.log("No groups have been created for this course yet");
-            setGroups([]);
-          });
+        queryGroupsFromCourseId(user.accessToken, id).then((groups) => {
+          setGroups(groups);
+        });
       }
     };
     fetchData();
