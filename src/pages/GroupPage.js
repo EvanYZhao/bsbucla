@@ -62,61 +62,72 @@ export default function GroupPage() {
       <Box
         bgcolor ="#e4ecf0"
         marginTop={2}
-        borderRadius={8}
+        borderRadius={5}
         p={2.5}
         mb={3}
-        border={2.5}
-        borderColor="#85A8BA"
+
       >
-        <Typography fontFamily="Manrope, sans-serif" fontSize="1.5rem" color="#3a586b">
+        <Typography fontFamily="Manrope, sans-serif" fontSize="2.5rem" color="#3a586b">
           <b>GROUP NAME:</b> {group?.name}
         </Typography>
-        <Typography fontFamily="Manrope, sans-serif" fontSize="1.5rem" color="#3a586b">
+        <Typography fontFamily="Manrope, sans-serif" fontSize="2.5rem" color="#3a586b">
           <b>Course:</b> {course}
         </Typography>
       </Box>
-      <Typography fontFamily="Manrope, sans-serif" fontSize="1.5rem" color="#3a586b">
+      <Typography fontFamily="Manrope, sans-serif" fontSize="2rem" color="#3a586b">
         <b>Members:</b>
       </Typography>
-      {group?.members.map((member, index) => {
-        return (
-          <Box
-            key={index}
-            bgcolor ="#e4ecf0"
-            marginTop={2}
-            borderRadius={8}
-            p={2.5}
-            mb={3}
-            border={2.5}
-            borderColor="#85A8BA"
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {member.hasOwnProperty("picture") ? (
-                <img
-                  referrerPolicy="no-referrer"
-                  src={member.picture}
-                  alt="Pfp"
-                  style={{ height: "64px", width: "64px", marginRight: "24px" }}
-                />
-              ) : (
-                <div style={{ height: "64px", width: "64px", marginRight: "24px", backgroundColor: "#85A8BA" }}></div>
-              )}
-              <div>
-                <Typography fontFamily="Manrope, sans-serif" fontSize="1.5rem" color="#3a586b">
-                  {member.name}
-                </Typography>
-                {member.hasOwnProperty("email") ? (
-                  <Typography fontFamily="Manrope, sans-serif" fontSize="1rem" color="#3a586b">
-                    {member.email}
-                  </Typography>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </div>
-          </Box>
-        );
-      })}
+      <Box
+        width = "95%"
+        bgcolor ="#e4ecf0"
+        marginTop={2}
+        borderRadius ={4}
+        p={2.5}
+        mb={3}
+      >
+      <Grid container spacing={2}>
+        {group?.members.map((member, index) => {
+          return (
+            <Grid item xs={12} sm={6} key={index}>
+              <Box
+                bgcolor ="white"
+                marginTop={2}
+                borderRadius={2}
+                p={2.5}
+                mb={3}
+                boxShadow = "8px 8px 0px 0px rgba(0, 0, 0, 0.1)"
+
+              >
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  {member.hasOwnProperty("picture") ? (
+                    <img
+                      referrerPolicy="no-referrer"
+                      src={member.picture}
+                      alt="Pfp"
+                      style={{ height: "64px", width: "64px", marginRight: "24px" }}
+                    />
+                  ) : (
+                    <div style={{ height: "64px", width: "64px", marginRight: "24px", backgroundColor: "#85A8BA" }}></div>
+                  )}
+                  <div>
+                    <Typography fontFamily="Manrope, sans-serif" fontSize="1.5rem" color="#3a586b">
+                      {member.name}
+                    </Typography>
+                    {member.hasOwnProperty("email") ? (
+                      <Typography fontFamily="Manrope, sans-serif" fontSize="1rem" color="#3a586b">
+                        {member.email}
+                      </Typography>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </div>
+              </Box>
+            </Grid>
+          );
+        })}
+      </Grid>
+      </Box>
       <Button onClick={joinButtonHandler}>
         {group?.members[0].hasOwnProperty("email")
           ? "Leave group"
@@ -124,4 +135,4 @@ export default function GroupPage() {
       </Button>
     </div>
   );
-}
+  }
