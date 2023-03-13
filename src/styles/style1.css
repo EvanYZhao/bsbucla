@@ -17,7 +17,7 @@ html {
     
   
     .test{
-      background-image: linear-gradient(#ffffff, #ffffff)
+      background-image: linear-gradient(#F1F0E8, #F1F0E8)
     }
     .centered {
       position: absolute;
@@ -50,7 +50,9 @@ html {
     }
 
     @import url('https://fonts.googleapis.com/css?family=Inder&display=swap');
-  
+    @import url('https://fonts.googleapis.com/css?family=Manrope&display=swap');
+    
+    
     #navTitle {
       width: 100%;
       height: 20vh;
@@ -61,4 +63,5 @@ html {
     
     #navTitle > .MuiTypography-root {
       font-family: 'Inder', sans-serif;
+      font-Family: 'Manrope', sans-serif;
     }

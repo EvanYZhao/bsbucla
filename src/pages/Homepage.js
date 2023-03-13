@@ -34,18 +34,18 @@ export default function Homepage() {
                   items-center
            "
       >
-        <Typography fontFamily = "Inder, sans-serif" fontSize = '4rem' color = "#3a586b">
-          <b>BRUIN STUDY BUDDIES</b>
+        <Typography fontFamily = "Manrope, sans-serif" fontSize = "4.5rem" color = "#3a586b">
+         <b> BRUIN STUDY BUDDIES </b>
         </Typography>
       </div>
 
       <div className="grid grid-cols-2 w-full px-24">
         <div className="flex flex-col space-y-6 items-center">
-          <Typography fontFamily = "Inder, sans-serif" color = "#3a586b"  variant="h5"> 
+          <Typography fontFamily = "Manrope, sans-serif" color = "#3a586b"  variant="h5"> 
           CHATBOX </Typography>
         </div>
         <div className="flex flex-col space-y-6 items-center">
-          <Typography fontFamily = "Inder, sans-serif" color = "#3a586b" variant="h5">GROUPS</Typography>
+          <Typography fontFamily = "Manrope, sans-serif" color = "#3a586b" variant="h5">GROUPS</Typography>
           <div className="w-1/2 space-y-4">
             {groups?.map((g) => (
               <div key={listId}>
