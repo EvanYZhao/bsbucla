@@ -5,7 +5,7 @@ import { UserAuth } from "../context/AuthContext";
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
-
+import {Button} from "@mui/material"
 
 export default function GroupPage() {
   //this is the group ID
