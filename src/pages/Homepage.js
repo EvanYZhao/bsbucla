@@ -7,6 +7,13 @@ import Typography from "@mui/material/Typography";
 import GroupCard from "../components/GroupCard";
 import { getUserProfile, queryGroupFromId } from "../database/mongodb";
 
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+
+});
+
 export default function Homepage() {
   const { user } = UserAuth(); // Used to display user name
   const [groups, setGroups] = useState([]);
