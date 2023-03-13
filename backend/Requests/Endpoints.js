@@ -229,9 +229,16 @@ app.patch('/leaveGroupById', async (req, res) => {
     res.send('Forbidden: user not in group');
     return;
   }
+
+  // Update user's groups
   user.groups = user.groups.filter(group => group != group._id);
   await user.save();
 
+  // Update group's users
+  group.members = group.members.filter(member => member != user.firebaseId);
+  await group.save();
+
+  // Delete group and chatroom if no more people
   if (group.members.length === 1) {
     await ChatroomModel.deleteOne({ _id: group.chatroomId });
     group.deleteOne();
