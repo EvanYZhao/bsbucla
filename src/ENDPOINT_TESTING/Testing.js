@@ -94,7 +94,7 @@ export default function TestingPage() {
 
   const createGroupHandler = async (e) => {
     e.preventDefault();
-    const group = await createGroup(user?.accessToken, {name: groupName, desc: groupDesc, courseId: groupCourseId, maxMembers: groupMaxMembers});
+    const group = await createGroup(user?.accessToken, {name: groupName, description: groupDesc, courseId: groupCourseId, maxMembers: groupMaxMembers});
     if (group) {
       setGroupIdResp(group.groupId);
       if (groupCourseId === courseIdPrefix) {

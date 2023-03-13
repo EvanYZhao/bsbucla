@@ -19,7 +19,6 @@ export default function GroupPage() {
   const [course, setCourse] = useState("");
 
   useEffect(() => {
-    console.log("use effect called");
     const fetchData = async () => {
       const groupData = await queryGroupFromId(user.accessToken, id);
       const courseData = await queryCourseFromId(

@@ -5,41 +5,42 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import GroupCard from "../components/GroupCard";
 import {
   createGroup,
 } from "../database/mongodb";
-import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 
 export default function CreateGroup() {
-  //todo:
-  //group name, class ID, number of people max in group, a description
-  //for simplicity, make the user get the class ID rather than looking for it?
-  //or let them type in the class name? and do a search bar type of deal
-  const { id } = useParams();
   const { user } = UserAuth();
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [groupId, setGroupId] = useState(null);
 
   const [groupName, setGroupName] = useState("");
-  const [classId, setclassId] = useState("");
+  const [classId, setClassId] = useState("");
   const [maxPeople, setMaxPeople] = useState(0);
   const [description, setDescription] = useState("");
   
-  const joinButtonHandler = async () =>{
-    const response = createGroup(user?.accessToken, {name: groupName, desc: description, 
-      courseId: classId, maxMembers: maxPeople}).then(result => result)
-      .catch(err => setErrorMessage(err))
-    
+  const joinButtonHandler = () =>{
+    const response = createGroup(user?.accessToken, {name: groupName, description: description, 
+      courseId: classId, maxMembers: maxPeople})
+      .then(result => setGroupId(result.groupId))
+      .catch(err => setErrorMessage(err.response.data));
+  };
+
+  const clearButtonHandler = () =>{
+    setDescription("");
+    setGroupName("");
+    setClassId("");
+    setMaxPeople("");
   };
 
   const handleNameChange = e =>{
     setGroupName(e.target.value);
   };
 
-  const handleclassIdChange = e =>{
-    setclassId(e.target.value);
+  const handleClassIdChange = e =>{
+    setClassId(e.target.value);
   };
 
   const handleMaxPeopleChange = e =>{
@@ -48,6 +49,15 @@ export default function CreateGroup() {
 
   const handleDescriptionChange = e =>{
     setDescription(e.target.value);
+  };
+
+  const responseMessage = () =>{
+    if (groupId && errorMessage != null){
+      return `Group created! Group ID: ${groupId}`
+    }
+    else if (errorMessage){
+      return errorMessage
+    }
   };
 
   return (
@@ -65,15 +75,18 @@ export default function CreateGroup() {
         <TextField
           label="Group Name"
           onChange={handleNameChange}
+          value={groupName}
         />
         <TextField
-          label="Class"
-          onChange={handleclassIdChange}
+          label="Class ID"
+          onChange={handleClassIdChange}
+          value={classId}
         />
         <TextField
           label="Group size"
           type="number"
           onChange={handleMaxPeopleChange}
+          value={maxPeople}
         />
       </Box>
       <TextField
@@ -84,6 +97,7 @@ export default function CreateGroup() {
             width:'500px'
           }}
           onChange={handleDescriptionChange}
+          value={description}
         />
       <Button
         sx={{
@@ -95,6 +109,10 @@ export default function CreateGroup() {
       > 
         Create group 
       </Button>
+      <Button onClick= {clearButtonHandler}>Clear form</Button>
+      <Typography variant="h3">
+        {responseMessage()}
+      </Typography>
     </div>
   );
 }
