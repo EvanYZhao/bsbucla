@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
 import {Button} from "@mui/material"
-import Container from "@mui/material/Container"
 
 export default function GroupPage() {
   //this is the group ID
@@ -18,7 +17,6 @@ export default function GroupPage() {
   const [course, setCourse] = useState("");
 
   useEffect(() => {
-    console.log("use effect called");
     const fetchData = async () => {
       const groupData = await queryGroupFromId(user.accessToken, id);
       const courseData = await queryCourseFromId(
