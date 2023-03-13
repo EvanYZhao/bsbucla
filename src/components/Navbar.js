@@ -48,17 +48,8 @@ export default function Navbar() {
   return user ? (
     <header>
       <nav
-        className="flex
-                   items-center
-                   justify-between
-                   w-full
-                   py-4
-                   md:py-0
-                   px-6
-                   text-lg text-gray-700
-                   bg-neutral-800
-                   h-20
-                   "
+        className="flex items-center justify-between w-full py-4 md:py-0 px-6 text-lg text-gray-700"
+        style={{ backgroundColor: '#85A8BA' }}
       >
         <div className="flex items-center">
           <IconButton
