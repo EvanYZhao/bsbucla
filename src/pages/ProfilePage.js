@@ -1,5 +1,6 @@
 import { Card, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import { getUserProfile, queryGroupFromId } from "../database/mongodb";
 
@@ -25,7 +26,7 @@ export default function ProfilePage() {
   }, [user]);
 
   return(
-    <div className="m-10 flex flex-col items-center">
+    <div className="m-10 flex flex-col items-center h-max">
       <Card className="
         w-4/5 sm:w-3/5 md:w-2/4 lg:w-2/5 xl:w-2/6 2xl:w-1/4
         flex flex-col
@@ -33,7 +34,9 @@ export default function ProfilePage() {
         space-y-4
         p-5
         " 
-        variant="outlined">
+        variant="outlined"
+        sx={{ boxShadow: 2, borderRadius: '10%' }}
+        >
         <div className="
           flex flex-col
           items-center
@@ -41,18 +44,22 @@ export default function ProfilePage() {
           my-5
         ">
           <img className="w-max rounded-full" src={dbUser?.picture} referrerPolicy='no-referrer' />
-          <Typography variant="h4">{dbUser?.name}</Typography>
+          <Typography variant="h5">{dbUser?.name}</Typography>
           <Typography variant="body1">{dbUser?.email}</Typography>
-          <Typography variant="body1">Major: {dbUser?.major !== '' ? dbUser?.major : 'None'}</Typography>
+          {/* <Typography variant="body1">Major: {dbUser?.major !== '' ? dbUser?.major : 'None'}</Typography> */}
         </div>
-        <Typography variant="h4">My Groups:</Typography>
-        {
-          groups?.map(group => 
-            <Card key={group._id} className="py-3 w-1/2 text-center">
-              <Typography variant="h5">{group?.name}</Typography>
-            </Card>
-          )
-        }
+        <div className="flex flex-col items-center w-1/2">
+          <Typography variant="h5">My Groups:</Typography>
+          {
+            groups?.map(group => 
+              <Link to={`/group/${group._id}`} className="py-3 w-full text-center">
+                  <Card hoverable>
+                    <Typography variant="h6">{group?.name}</Typography>
+                  </Card>
+              </Link>
+            )
+          }
+        </div>
       </Card>
     </div>
   )
