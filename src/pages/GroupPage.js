@@ -2,13 +2,10 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-import { Button } from "@mui/material";
-import {
-  queryCourseFromId,
-  queryGroupFromId,
-  leaveGroupById,
-  joinGroupById,
-} from "../database/mongodb";
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
+import {Button} from "@mui/material"
 
 export default function GroupPage() {
   //this is the group ID
