@@ -51,33 +51,18 @@ function App() {
             }
           />
           <Route
-            path="/group/:id"
-            element={
-              <Protected>
-                <GroupPage />
-              </Protected>
-            }
-          />
-          <Route
-            path="/course/:id"
-            element={
-              <Protected>
-              </Protected>
-            }
-          />
-          <Route
-            path="/testing"
-            element={
-              <Protected>
-                <TestingPage />
-              </Protected>
-            }
-          />
-          <Route
             path="/chat"
             element={
               <Protected>
                 <SocketChatPage />
+              </Protected>
+            }
+          />
+          <Route
+            path="/creategroup"
+            element={
+              <Protected>
+                <CreateGroupPage />
               </Protected>
             }
           />

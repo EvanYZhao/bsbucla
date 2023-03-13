@@ -29,6 +29,11 @@ const GroupSchema = new mongoose.Schema({
     type: ObjectId,
     required: false,
     default: new ObjectId()
+  },
+  description: {
+    type: String,
+    required: false,
+    default: ''
   }
 });
 

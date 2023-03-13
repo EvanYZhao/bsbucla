@@ -9,7 +9,7 @@ app.get('/getCourseById', async (req, res) => {
 
   // Fetch Course
   const course = await CourseModel.findById(req.query.id, { __v: 0 })
-    .then(response)
+    .then(response => response)
     .catch(null);
 
   // Course with ID does not exist
@@ -37,13 +37,8 @@ app.get('/getCoursesByPrefix', async (req, res) => {
         { 'name': { $regex: prefix, $options: 'i'} },
       ]
     }, { __v: 0 })
-    .then((response) => {
-      return response;
-    })
-    .catch((err) => {
-      console.log(err);
-      return null;
-    });
+    .then(response => response)
+    .catch(e => null);
 
   if (!courses) {
     res.status(400);
@@ -71,9 +66,9 @@ app.get('/getGroupById', async (req, res) => {
   }
 
   const memberList = [];
-  const limit = group.members.includes(user.firebaseId) ? {} : { email: 0, picture: 0, major: 0 };
+  const limit = group.members.includes(user.firebaseId) ? {} : { email: 0, picture: 0, major: 0, firebaseId: 0 };
   for (const memberId of group.members) {
-    const member = await UserModel.findOne({ firebaseId: memberId }, {...limit, _id: 0, firebaseId: 0, created: 0, groups: 0, __v: 0});
+    const member = await UserModel.findOne({ firebaseId: memberId }, {...limit, _id: 0, created: 0, groups: 0, __v: 0});
     memberList.push(member);
   }
 
@@ -93,7 +88,7 @@ app.get('/getGroupsByCourseId', async (req, res) => {
   const groups = await GroupModel.find({ courseId: req.query.id }, {__v: 0, created: 0, chatroomId: 0})
     .then(response => {
       if (response.length === 0)
-        return null;
+        return [];
       return response;
     })
     .catch(() => null);
@@ -136,6 +131,21 @@ app.post('/createGroup', async (req, res) => {
   const verify = await verifyRequestBody(req, res, GroupModel, ['name']);
   if (!verify) return false;
   const [user, groupDoc] = verify;
+
+  // Verify name
+  if (req.body.name === '') {
+    res.status(400);
+    res.send('Bad Request: invalid group name');
+    return;
+  }
+
+  // Verify course exists
+  const associatedCourse = await CourseModel.findById(req.body.courseId);
+  if (!associatedCourse) {
+    res.status(400);
+    res.send('Bad Request: invalid course id');
+    return;
+  }
 
   // Link User to Group
   groupDoc.set('members', [user.firebaseId]);
@@ -204,7 +214,7 @@ app.patch('/leaveGroupById', async (req, res) => {
   if (!user) return false;
 
   const group = await GroupModel.findById(req.query.id)
-    .then((response) => response)
+    .then(response => response)
     .catch(() => null);
 
   if (!group) {
@@ -219,9 +229,16 @@ app.patch('/leaveGroupById', async (req, res) => {
     res.send('Forbidden: user not in group');
     return;
   }
+
+  // Update user's groups
   user.groups = user.groups.filter(group => group != group._id);
   await user.save();
 
+  // Update group's users
+  group.members = group.members.filter(member => member != user.firebaseId);
+  await group.save();
+
+  // Delete group and chatroom if no more people
   if (group.members.length === 1) {
     await ChatroomModel.deleteOne({ _id: group.chatroomId });
     group.deleteOne();

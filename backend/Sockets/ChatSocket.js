@@ -3,10 +3,10 @@ var app = express();
 var server = require('http').Server(app);
 const verifyToken = require('../Firebase/firebaseAdmin');
 const axios = require('axios');
+const { ObjectId } = require('mongodb'); 
 require('../MongoDB');
 
-const { ObjectId } = require('mongodb');
-const { ChatroomModel } = require('../Models');
+const { ChatroomModel, GroupModel } = require('../Models');
 
 const socketIO = require("socket.io")(server, {
   cors: {
@@ -18,6 +18,26 @@ const socketIO = require("socket.io")(server, {
 const CHATPORT = process.env.PORT || 3001;
 server.listen(CHATPORT, () => {
   console.log(`ChatSocket started on ${CHATPORT}.`);
+});
+
+// If new member joins, update chatroom if active
+app.post('/updateChatroomMembers', async (req, res) => {
+  const groupId = req.query.groupId;
+  if (socketIO.sockets.adapter.rooms().get(groupId).size > 0) {
+    const group = await axios.get('https://bsbucla-requests.up.railway.app/getGroupById', { headers: { Authorization: 'Bearer ' + token }, params: {id: groupId}})
+    .then(group => {
+      return group.data;
+    })
+    .catch(() => {
+      return null;
+    });
+
+    if (!group) {
+      return;
+    }
+
+    socketIO.to(groupId).emit('s_group_members', group.members);
+  }
 });
 
 socketIO.on('connection', async (socket) => {
@@ -44,6 +64,8 @@ socketIO.on('connection', async (socket) => {
     return;
   }
 
+  console.log(group);
+
   const chatroom = await ChatroomModel.findById(group.chatroomId);
 
   // Join chatroom if user in group
@@ -55,6 +77,9 @@ socketIO.on('connection', async (socket) => {
     const upstreamRoom = await ChatroomModel.findById(group.chatroomId).limit(50);
 
     socket.emit('s_history', upstreamRoom.messages);
+
+    // Return all members' information
+    socket.emit('s_group_members', group.members);
   }
 
   // Receive message
@@ -65,7 +90,8 @@ socketIO.on('connection', async (socket) => {
     console.log(out);
 
     // Save to chatroom logs
-    const newMessage = { _id: new ObjectId(), userId: user.uid, message, reactions: [] };
+    const newId = new ObjectId();
+    const newMessage = { _id: newId, userId: user.uid, message, reactions: [] };
     chatroom.messages.push(newMessage);
     await chatroom.save();
     
