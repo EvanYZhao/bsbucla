@@ -16,9 +16,12 @@ import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
 
 const logos = [
-  "https://i.ibb.co/4WSNT82/logo.png",
-  "https://i.ibb.co/p2WNYs3/stache.png",
-];
+    'https://i.ibb.co/4WSNT82/logo.png',
+    'https://i.ibb.co/p2WNYs3/stache.png',
+    'https://i.imgur.com/PmgiCUM.png',
+    'https://i.imgur.com/OTxgYF8.png',
+    'https://i.imgur.com/OTxgYF8.png'
+]
 
 export default function Navbar() {
   const { user, googleSignOut } = UserAuth();
@@ -54,7 +57,7 @@ export default function Navbar() {
                    px-6
                    text-lg text-gray-700
                    bg-neutral-800
-                   h-16
+                   h-20
                    "
       >
         <div className="flex items-center">
@@ -66,9 +69,9 @@ export default function Navbar() {
             <img
               referrerPolicy="no-referrer"
               className="object-scale-down 
-                            h-10
+                            h-12
                             "
-              src={logos[0]}
+              src={logos[2]}
               alt="pfp"
             />
           </IconButton>

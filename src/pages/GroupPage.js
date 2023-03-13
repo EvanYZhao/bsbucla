@@ -2,13 +2,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
-import { Button } from "@mui/material";
-import {
-  queryCourseFromId,
-  queryGroupFromId,
-  leaveGroupById,
-  joinGroupById,
-} from "../database/mongodb";
+import Button from '@mui/material-next/Button';
+//npm install /@mui/material-next
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
+
 
 export default function GroupPage() {
   //this is the group ID
@@ -50,6 +49,12 @@ export default function GroupPage() {
     const data = await queryCourseFromId(user.accessToken, group?.courseId);
     setCourse(data?.name);
   };
+
+  const theme = createTheme({
+  
+  });
+
+
 
   return (
     <div className="bg-slate-100 h-full flex flex-col items-center">
