@@ -15,7 +15,7 @@ import { queryGroupFromId } from "../database/mongodb";
  * @param {*} groupID Group ID in MongoDB 'groups' collection
  * @returns {JSX.Element}
  */
-export default function GroupCard({ groupID, place }) {
+export default function GroupCard({ groupID, place, displayChat }) {
   const { user } = UserAuth();
   const navigate = useNavigate();
 
@@ -27,14 +27,32 @@ export default function GroupCard({ groupID, place }) {
   }, [groupID]);
 
   return (
-    <div  className="p-5 mb-8 rounded-2xl bg-neutral-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]  "style={{ width: "100%", display: "flex", justifyContent:"space-between" }}>
-      
-      <CardContent sx={{ 
-        fontFamily: "Manrope, sans-serif",
-        fontWeight: "bold",
-      }}>
-        <Typography sx={{fontFamily: "Manrope, sans-serif", fontSize: 20, color: "#3a586b" }}>{group?.name}</Typography>
-        <Typography sx={{fontFamily: "Manrope, sans-serif", color: "#3a586b" }}>
+    <div
+      className="p-5 mb-8 rounded-2xl bg-neutral-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]  "
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      <CardContent
+        sx={{
+          fontFamily: "Manrope, sans-serif",
+          fontWeight: "bold",
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: "Manrope, sans-serif",
+            fontSize: 20,
+            color: "#3a586b",
+          }}
+        >
+          {group?.name}
+        </Typography>
+        <Typography
+          sx={{ fontFamily: "Manrope, sans-serif", color: "#3a586b" }}
+        >
           {group?.members?.length}
           {group?.maxMembers !== 0 ? "/" + group?.maxMembers : ""}{" "}
           {group?.maxMembers
@@ -45,12 +63,24 @@ export default function GroupCard({ groupID, place }) {
         </Typography>
       </CardContent>
       <CardActions>
-        
-        <Button sx={{ color: "#3a586b", border: "1px solid rgba(58, 88, 107, 0.5)" }} onClick={() => navigate(`/group/${groupID}`)}>
+        {place === "home" ? (
+          <Button
+            sx={{
+              color: "#3a586b",
+              border: "1px solid rgba(58, 88, 107, 0.5)",
+            }}
+            onClick={displayChat}
+          >
+            Chat
+          </Button>
+        ) : null}
+        <Button
+          sx={{ color: "#3a586b", border: "1px solid rgba(58, 88, 107, 0.5)" }}
+          onClick={() => navigate(`/group/${groupID}`)}
+        >
           {group?.members?.at(0)?.hasOwnProperty("email") ? "View" : "Join"}
         </Button>
-        
       </CardActions>
-  </div>
+    </div>
   );
 }

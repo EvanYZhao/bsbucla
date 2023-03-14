@@ -9,12 +9,16 @@ import { getUserProfile } from "../database/mongodb";
 import { createTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import ChatBox from "../components/Chat/ChatBox";
+import { CenterFocusStrong } from "@mui/icons-material";
 
 const theme = createTheme();
 
 export default function Homepage() {
   const { user } = UserAuth(); // Used to display user name
   const [groups, setGroups] = useState([]);
+  const [chatDisplay, setChatDisplay] = useState(false);
+  const [chatId, setChatId] = useState(null);
   const listId = useId();
 
   useEffect(() => {
@@ -22,6 +26,12 @@ export default function Homepage() {
       setGroups(profile.groups);
     });
   }, [user]);
+
+  const displayChat = (id) => {
+    setChatDisplay(true);
+    setChatId(id);
+    console.log("Chatting in dashboard for group: " + id);
+  };
 
   return (
     <div className="bg-slate-100 h-full flex flex-col items-center">
@@ -35,7 +45,6 @@ export default function Homepage() {
             fontFamily="Manrope, sans-serif"
             fontSize="4.5rem"
             color="#3a586b"
-            
           >
             <b>BRUIN STUDY BUDDIES </b>
           </Typography>
@@ -43,18 +52,18 @@ export default function Homepage() {
       </div>
       <div className="w-full flex justify-center">
         <div className="w-3/4 grid grid-cols-2 gap-4">
-          <Box
-                
-                marginTop={10}
-                borderRadius={3}
-                p={2}
-                mb={1}
-                width="100%" 
-          >
-          <img src="https://i.imgur.com/wfvVfwq.png" alt="BSB" />
+          <Box borderRadius={3} p={2} mb={1} width="100%">
+            {chatDisplay ? (
+              <div className="h-[62vh]">
+                  <ChatBox groupId={chatId} />
+              </div>
+            ) : (
+              <Box marginTop={10}>
+                <img src="https://i.imgur.com/wfvVfwq.png" alt="BSB" />
+              </Box>
+            )}
           </Box>
           <div className="flex flex-col space-y-2 items-center">
-         
             {groups.length > 0 ? (
               <Box
                 bgcolor="#e4ecf0"
@@ -63,23 +72,26 @@ export default function Homepage() {
                 p={2}
                 mb={1}
                 width="100%"
-                
               >
                 <div className="flex flex-col space-y-2 items-center">
-                <Typography
-                fontFamily="Manrope, sans-serif"
-                fontSize="2rem"
-                color="#3a586b"
-                >
-                GROUPS
-                </Typography>
+                  <Typography
+                    fontFamily="Manrope, sans-serif"
+                    fontSize="2rem"
+                    color="#3a586b"
+                  >
+                    GROUPS
+                  </Typography>
                 </div>
                 <div className="h-[50vh] px-5 overflow-y-hidden hover:overflow-y-scroll">
                   {groups.map((g) => (
-                    <Grid item xs={12} sm={6} md = {4}key={listId}>
+                    <Grid item xs={12} sm={6} md={4} key={listId}>
                       <div style={{ padding: "10px" }}>
-                     
-                      <GroupCard id={listId} groupID={g} place={"home"} />
+                        <GroupCard
+                          id={listId}
+                          groupID={g}
+                          place={"home"}
+                          displayChat={() => displayChat(g)}
+                        />
                       </div>
                     </Grid>
                   ))}
