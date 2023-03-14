@@ -193,9 +193,13 @@ export default function TestingPage() {
             <Button variant="contained" onClick={group?.members[0].hasOwnProperty('email') ? leaveGroup : joinGroup}>
               {group?.members[0].hasOwnProperty('email') ?  'Leave' : 'Join'}
             </Button>
-            <div className="bg-neutral-100 w-2/3 h-[500px]">
+            {
+              group?.members[0].hasOwnProperty('email') ?
+              <div className="bg-neutral-100 w-2/3 h-[500px]">
               <ChatBox groupId={group._id}/>
-            </div>
+              </div>
+              : <></>
+            }
           </> : <></>
         }
       </div>
