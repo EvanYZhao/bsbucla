@@ -62,7 +62,19 @@ export default function CreateGroup() {
 
   return (
     <div className="bg-slate-100 h-full flex flex-col items-center">
-      <Typography variant="h2">
+      <Typography 
+        variant="h2" 
+        fontFamily="Manrope, sans-serif" 
+        fontSize="3.8rem" 
+        color="#3a586b"
+        sx={{
+          marginBottom: '20px',
+          marginTop: '20px',
+          backgroundColor: '#e4ecf0',
+          padding: '16px',
+          borderRadius: '10px',
+        }}
+      >
         Create your group:
       </Typography>
       <Box
@@ -101,15 +113,34 @@ export default function CreateGroup() {
         />
       <Button
         sx={{
-          width: '200px',
-          height: '50px',
-          fontSize: '20px'
+          width: "200px",
+          height: "50px",
+          fontFamily: "Manrope, sans-serif",
+          fontSize: "20px",
+          borderRadius: "8px",
+          color: "#3a586b",
+          backgroundColor: "#e4ecf0",
+          marginBottom: '16px',
+          marginTop: '16px'
         }}
         onClick={joinButtonHandler}
-      > 
-        Create group 
+      >
+        Create group
       </Button>
-      <Button onClick= {clearButtonHandler}>Clear form</Button>
+      <Button
+        sx={{
+          width: "160px",
+          height: "40px",
+          fontFamily: "Manrope, sans-serif",
+          fontSize: "16px",
+          borderRadius: "8px",
+          color: "#3a586b",
+          backgroundColor: "#e4ecf0"
+        }}
+        onClick={clearButtonHandler}
+      >
+        Clear form
+      </Button>
       <Typography variant="h3">
         {responseMessage()}
       </Typography>

@@ -10,6 +10,7 @@ import CoursePage from "./pages/CoursePage";
 import TestingPage from "./ENDPOINT_TESTING/Testing";
 import Navbar from "./components/Navbar";
 import SocketChatPage from "./ENDPOINT_TESTING/SocketChat";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -18,6 +19,14 @@ function App() {
         <Navbar/>
         <Routes>
           <Route path="/" element={<SigninPage />} />
+          <Route
+            path="/profile"
+            element={
+              <Protected>
+                <ProfilePage />
+              </Protected>
+            }
+          />
           <Route
             path="testing" // Tentative testing page DO NOT DELETE
             element={
