@@ -28,9 +28,12 @@ export default function GroupCard({ groupID, place }) {
 
   return (
     <Card sx={{ minWidth: 275, minHeight: 100 }}>
-      <CardContent>
-        <Typography sx={{ fontSize: 14 }}>{group?.name}</Typography>
-        <Typography sx={{ fontSize: 14 }}>
+      <CardContent sx={{ 
+        fontFamily: "Manrope, sans-serif",
+        fontWeight: "bold",
+      }}>
+        <Typography sx={{fontFamily: "Manrope, sans-serif", fontSize: 20, color: "#3a586b" }}>{group?.name}</Typography>
+        <Typography sx={{fontFamily: "Manrope, sans-serif", color: "#3a586b" }}>
           {group?.members?.length}
           {group?.maxMembers !== 0 ? "/" + group?.maxMembers : ""}{" "}
           {group?.maxMembers
@@ -41,7 +44,7 @@ export default function GroupCard({ groupID, place }) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button onClick={() => navigate(`/group/${groupID}`, { state: place })}>
+        <Button sx={{ color: "#3a586b", border: "1px solid rgba(58, 88, 107, 0.5)" }} onClick={() => navigate(`/group/${groupID}`)}>
           {group?.members?.at(0)?.hasOwnProperty("email") ? "View" : "Join"}
         </Button>
       </CardActions>
