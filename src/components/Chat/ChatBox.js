@@ -1,15 +1,15 @@
-import { Button, TextField } from "@mui/material";
-import { useState, useEffect, useRef } from "react";
+import ChatUtility from "./ChatUtility";
+import ChatMessage from "./ChatMessage";
 import socketIO from "socket.io-client"
-import { UserAuth } from "../context/AuthContext";
-import ChatMessage from "../components/Chat/ChatMessage"
-import ChatUtility from "../components/Chat/ChatUtility"
+import { useState, useEffect, useRef } from "react";
+import { UserAuth } from "../../context/AuthContext";
+import { Avatar, Divider, IconButton, TextField } from "@mui/material";
+import { ArrowForward } from "@mui/icons-material";
+import { blue } from "@mui/material/colors";
 
-const socketPath = 'https://bsbucla-chat.up.railway.app';
-
-export default function SocketChatPage() {
+const socketPath = "https://bsbucla-chat.up.railway.app";
+export default function ChatBox({ groupId }) {
   const { user } = UserAuth();
-  const [groupId, setGroupId] = useState("");
   const [message, setMessage] = useState("");
   const [socket, setSocket] = useState(null);
 
@@ -17,8 +17,20 @@ export default function SocketChatPage() {
   const [members, setMembers] = useState([]);
   
   const lastMessageRef = useRef(null);
-  
-  const lastMessageVisible = ChatUtility.useIntersection(lastMessageRef, '0px');
+
+  useEffect(() => {
+    if (socket) {
+      socket?.disconnect();
+    }
+    if (groupId !== "") {
+      setSocket(
+        socketIO(socketPath, {
+          query: { token: user.accessToken, groupId },
+          transports: ["websocket", "polling", "flashsocket"],
+        })
+      );
+    }
+  }, [groupId]);
 
   // Keep socket alive
   useEffect(() => {
@@ -117,68 +129,69 @@ export default function SocketChatPage() {
       setMembers(data);
     });
   }, [socket]);
+    
+  const lastMessageVisible = ChatUtility.useIntersection(lastMessageRef, '0px');
+  return (
+    <div className="flex flex-col w-full h-full">
+      {/* Messages list */}
+      <ul className="px-5 grow overflow-hidden hover:overflow-y-scroll">
+        {
+          messages.map(messageObject => {
+            return (
+              <ChatMessage key={messageObject._id}
+                messageObject={messageObject} 
+                members={members} 
+                userId={user.uid}
+              />
+            )
+          })
+        }
+        <div ref={lastMessageRef} className="py-2"></div>
+      </ul>
 
-  return(
-    <div className="flex justify-center h-3/4">
-      <div className="flex flex-col w-1/2">
-        {/* Group ID Text Field */}
-        <input type="text" 
-            value={groupId} 
-            onChange={(e) => setGroupId(e.target.value)}/>
+      {/* Line divider between messages and text input */}
+      <Divider />
 
-        {/* Connect to Socket Button */}
-        <Button
-          onClick={() => {
-            if (!socket && groupId !== "") {
-              setSocket(
-                socketIO(socketPath, {
-                  query: { token: user.accessToken, groupId },
-                  transports: ["websocket", "polling", "flashsocket"],
-                })
-              );
+      {/* 
+        Text Input
+
+        Press ArrowForward button to send message
+        or just press ENTER key
+      */}
+      <div className="flex p-5">
+        <TextField 
+          placeholder="Type something here..."
+          id="outlined-basic" 
+          variant="outlined" 
+          sx={{ '& fieldset': {borderRadius: '25px'} }}
+          className="grow"
+          onChange={e => setMessage(e.target.value)}
+          value={message}
+          onKeyDown={(ev) => {
+            if (ev.key === 'Enter' && socket && message !== '') {
+              ev.preventDefault();
+              socket.emit('c_message', message);
+              setMessage('');
             }
           }}
-        >
-          Connect to Socket
-        </Button>
-
-        {/* Messages list */}
-        <ul className="p-2 h-full overflow-y-scroll">
-          {
-            messages.map(messageObject => {
-              return (
-                <ChatMessage key={messageObject._id}
-                  messageObject={messageObject} 
-                  members={members} 
-                  userId={user.uid}
-                />
-              )
-            })
-          }
-          <div ref={lastMessageRef}></div>
-        </ul>
-
-        {/* Send New Message Button */}
-        <Button onClick={(e) => {
-          if (socket && message !== '') {
-            socket.emit('c_message', message);
-            setMessage('');
-          }
-        }}>
-          Send
-        </Button>
-
-        {/* New Message Text Field */}
-        <TextField
-          id="filled-multiline-static"
-          label="Message"
-          multiline
-          rows={4}
-          variant="filled"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
         />
+
+        {/* ArrowForward button to send message */}
+        <IconButton 
+          className="grow" 
+          style={{ backgroundColor: 'transparent' }}
+          onClick={(e) => {
+            if (socket && message !== '') {
+              socket.emit('c_message', message);
+              setMessage('');
+            }
+          }}
+          >
+          <Avatar className="hover:bg-blue-400" sx={{ bgcolor: blue[300] }}>
+            <ArrowForward fontSize="large"/>
+          </Avatar>
+        </IconButton>
       </div>
     </div>
-  );
+  )
 }

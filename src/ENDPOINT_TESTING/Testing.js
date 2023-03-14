@@ -1,5 +1,6 @@
 import { Button, FormControl, Input, InputLabel, TextField, Typography } from "@mui/material";
 import React, { useEffect, useId, useState } from "react";
+import ChatBox from "../components/Chat/ChatBox";
 import GroupCard from "../components/GroupCard";
 import SearchBar from "../components/SearchBar";
 import SignOutButton from "../components/SignOutButton";
@@ -192,12 +193,15 @@ export default function TestingPage() {
             <Button variant="contained" onClick={group?.members[0].hasOwnProperty('email') ? leaveGroup : joinGroup}>
               {group?.members[0].hasOwnProperty('email') ?  'Leave' : 'Join'}
             </Button>
+            <div className="bg-neutral-100 w-2/3 h-[500px]">
+              <ChatBox groupId={group._id}/>
+            </div>
           </> : <></>
         }
       </div>
 
       {/* Create Group Test */}
-      <div className="py-5 flex flex-col items-center space-y-5 bg-lime-200 w-1/2">
+      <div className="flex flex-col items-center space-y-5 bg-lime-200 w-1/2">
         <Typography variant='h4'>Create Group</Typography>
         <form onSubmit={createGroupHandler} className="flex flex-col space-y-5">
           <FormControl>
