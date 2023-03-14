@@ -1,0 +1,67 @@
+
+/* for sign in page, idk how to make it apply it only to the sign in page though lol*/
+/* like specifically the background gradient I know applies to multiple pages?*/
+
+html {
+    height: 100%;
+    }
+    body {
+      background-image: linear-gradient(#ffffff, #ffffff)
+    }
+
+    .grad{
+      padding: 0; margin: 0;
+      min-height: 100%;
+      background: linear-gradient(rgb(250, 213, 183), rgb(255, 255, 255));
+    }
+    
+  
+    .test{
+      background-image: linear-gradient(#F1F0E8, #F1F0E8)
+    }
+    .centered {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -25px 0 0 -25px; /* Apply negative top and left margins to truly center the element */
+      transform: translate(-50%, -50%);
+    }
+
+    .chatbox {
+      height: 500%;
+      width: 90%;
+      background-color: #F1F0E8;
+      box-shadow: 5px 5px 5px rgba(68, 75, 81, 0.2);
+      border-radius: 5px;
+      float: left;
+      margin: auto;
+
+    }
+
+    .groupbox {
+      background-color: #F1F0E8;
+      box-shadow: 5px 5px 5px rgba(49, 65, 79, 0.2);
+      border-radius: 5px;
+      
+      height: 500%;
+      width: 90%;
+      float: right;
+      margin: auto;
+    }
+
+    @import url('https://fonts.googleapis.com/css?family=Inder&display=swap');
+    @import url('https://fonts.googleapis.com/css?family=Manrope&display=swap');
+    
+    
+    #navTitle {
+      width: 100%;
+      height: 20vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #navTitle > .MuiTypography-root {
+      font-family: 'Inder', sans-serif;
+      font-Family: 'Manrope', sans-serif;
+    }

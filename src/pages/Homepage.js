@@ -5,7 +5,12 @@ import CreateGroupButton from "../components/CreateGroupButton";
 import { UserAuth } from "../context/AuthContext";
 import Typography from "@mui/material/Typography";
 import GroupCard from "../components/GroupCard";
-import { getUserProfile, queryGroupFromId } from "../database/mongodb";
+import { getUserProfile} from "../database/mongodb";
+import { createTheme} from '@mui/material/styles';
+
+const theme = createTheme({
+
+});
 
 export default function Homepage() {
   const { user } = UserAuth(); // Used to display user name
@@ -19,7 +24,7 @@ export default function Homepage() {
   }, [user]);
 
   return (
-    <div className="bg-slate-100 h-full flex flex-col items-center">
+    <div className="bg-slate-100 h-full flex flex-col items-center" theme ={theme}>
       <div
         id="navTitle"
         className="w-full
@@ -29,17 +34,18 @@ export default function Homepage() {
                   items-center
            "
       >
-        <Typography variant="h5">
-          <b>My Dashboard</b>
+        <Typography fontFamily = "Manrope, sans-serif" fontSize = "4.5rem" color = "#3a586b">
+         <b> BRUIN STUDY BUDDIES </b>
         </Typography>
       </div>
 
       <div className="grid grid-cols-2 w-full px-24">
         <div className="flex flex-col space-y-6 items-center">
-          <Typography variant="h5">Column 1 (Maybe Chatbox?)</Typography>
+          <Typography fontFamily = "Manrope, sans-serif" color = "#3a586b"  variant="h5"> 
+          CHATBOX </Typography>
         </div>
         <div className="flex flex-col space-y-6 items-center">
-          <Typography variant="h5">My Groups</Typography>
+          <Typography fontFamily = "Manrope, sans-serif" color = "#3a586b" variant="h5">GROUPS</Typography>
           <div className="w-1/2 space-y-4">
             {groups?.map((g) => (
               <div key={listId}>
