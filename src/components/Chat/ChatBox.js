@@ -18,6 +18,10 @@ export default function ChatBox({ groupId }) {
   
   const lastMessageRef = useRef(null);
 
+  const [promptMessage, setPromptMessage] = useState(true);
+
+  const lastMessageVisible = ChatUtility.useIntersection(lastMessageRef, '0px');
+
   useEffect(() => {
     if (socket) {
       socket?.disconnect();
@@ -130,7 +134,13 @@ export default function ChatBox({ groupId }) {
     });
   }, [socket]);
     
-  const lastMessageVisible = ChatUtility.useIntersection(lastMessageRef, '0px');
+  useEffect(() => {
+    if (lastMessageVisible)
+      setPromptMessage(false);
+    else
+      setPromptMessage(true);
+  }, [lastMessageVisible]);
+  
   return (
     <div className="flex flex-col w-full h-full">
       {/* Messages list */}
@@ -146,7 +156,7 @@ export default function ChatBox({ groupId }) {
             )
           })
         }
-        <div ref={lastMessageRef} className="py-2"></div>
+        <div ref={lastMessageRef} className="pt-1"></div>
       </ul>
 
       {/* Line divider between messages and text input */}
