@@ -50,29 +50,35 @@ export default function Homepage() {
               CHATBOX
             </Typography>
           </div>
-          <div className="flex flex-col space-y-6 items-center">
+          <div className="flex flex-col space-y-2 items-center">
             <Typography
               fontFamily="Manrope, sans-serif"
               fontSize="2rem"
               color="#3a586b"
             >
+              
               GROUPS
             </Typography>
             {groups.length > 0 ? (
               <Box
                 bgcolor="#e4ecf0"
                 marginTop={2}
-                borderRadius={4}
-                p={2.5}
-                mb={3}
+                borderRadius={3}
+                p={2}
+                mb={1}
+                width="100%"
+                
               >
-                <Grid container spacing={2}>
+                <div className="h-[50vh] px-5 overflow-y-hidden hover:overflow-y-scroll">
                   {groups.map((g) => (
-                    <Grid item xs={12} sm={6} key={listId}>
+                    <Grid item xs={12} sm={6} md = {4}key={listId}>
+                      <div style={{ padding: "10px" }}>
+                     
                       <GroupCard id={listId} groupID={g} place={"home"} />
+                      </div>
                     </Grid>
                   ))}
-                </Grid>
+                </div>
               </Box>
             ) : null}
           </div>
