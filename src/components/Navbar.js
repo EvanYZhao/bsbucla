@@ -1,18 +1,12 @@
 import { useState } from "react";
 import { UserAuth } from "../context/AuthContext";
 import SearchBar from "./SearchBar";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router";
 
 const logos = [
@@ -93,15 +87,12 @@ export default function Navbar() {
                   onClick={handleClick}
                   size="small"
                   sx={{ ml: 2 }}
-                  aria-controls={open ? "account-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
                 >
                   <img
                     referrerPolicy="no-referrer"
                     className="object-scale-down 
-                                border-2
-                                border-white
+                                shadow-lg
+                                border-2 border-neutral-300
                                 rounded-full 
                                 h-10
                                 "
@@ -147,19 +138,20 @@ export default function Navbar() {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
                 <MenuItem
-                  onClick={handleClose}
+                  onClick={(e) => {navigate('/profile')}}
                   style={{ justifyContent: "center" }}
                 >
                   <img
-                    referrerpolicy="no-referrer"
-                    className="object-scale-down 
-                                rounded-full 
-                                h-8
-                                mr-3
-                                "
-                    src={user?.photoURL}
-                    alt="pfp"
+                  referrerpolicy="no-referrer"
+                  className="object-scale-down 
+                              rounded-full 
+                              h-8
+                              mr-3
+                              "
+                  src={user?.photoURL}
+                  alt="pfp"
                   />
+                  
                   <Typography>{user?.displayName}</Typography>
                 </MenuItem>
                 <Divider />
