@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 import  Typography  from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -8,14 +8,17 @@ import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { queryCourseFromId, queryGroupFromId, leaveGroupById, joinGroupById } from "../database/mongodb";
 import {Button, Divider} from "@mui/material"
-import ChatBox from "../components/Chat/ChatBox";
+import { useNavigate } from "react-router-dom"
+import ChatBox from "../components/Chat/ChatBox"
 
 export default function GroupPage() {
   //this is the group ID
   const { id } = useParams();
   const { user } = UserAuth();
   const [group, setGroup] = useState(undefined);
-  const [course, setCourse] = useState("");
+  const [course, setCourse] = useState({});
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,14 +50,15 @@ export default function GroupPage() {
       .catch((err) => setGroup(undefined));
 
     const data = await queryCourseFromId(user.accessToken, group?.courseId);
-    setCourse(data?.name);
+    setCourse(data);
+    if (location.state === "home") {
+      navigate("/home");
+    } else {
+      navigate(`/course/${course._id}`, { state: course });
+    }
   };
 
-  const theme = createTheme({
-  
-  });
-
-
+  const theme = createTheme({});
 
   return (
     <div className="bg-slate-100 h-[90vh] flex flex-col items-center py-5">
@@ -140,8 +144,10 @@ export default function GroupPage() {
       <Button onClick={joinButtonHandler}>
         {group?.members[0].hasOwnProperty("email")
           ? "Leave group"
+          : group?.maxMembers === group?.members.length
+          ? "Group full"
           : "Join group"}
       </Button>
     </div>
   );
-  }
+}

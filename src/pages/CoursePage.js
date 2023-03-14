@@ -48,7 +48,7 @@ export default function CoursePage() {
             {groups.map((group) => (
               <Grid item xs={12} sm={6} md={4} key={group._id}>
                 <div style={{ padding: "16px" }}>
-                  <GroupCard groupID={group._id} />
+                  <GroupCard groupID={group._id} place="course"/>
                 </div>
               </Grid>
             ))}
