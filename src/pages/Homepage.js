@@ -28,37 +28,33 @@ export default function Homepage() {
       <div
         id="navTitle"
         className="w-full h-20 flex justify-center items-center"
+        style={{ padding: "80px" }}
       >
         <Box bgcolor="#e4ecf0" borderRadius={4} p={2}>
           <Typography
             fontFamily="Manrope, sans-serif"
             fontSize="4.5rem"
             color="#3a586b"
+            
           >
-            <b>BRUIN STUDY BUDDIES</b>
+            <b>BRUIN STUDY BUDDIES </b>
           </Typography>
         </Box>
       </div>
       <div className="w-full flex justify-center">
         <div className="w-3/4 grid grid-cols-2 gap-4">
-          <div className="flex flex-col space-y-6 items-center">
-            <Typography
-              fontFamily="Manrope, sans-serif"
-              fontSize="2rem"
-              color="#3a586b"
-            >
-              CHATBOX
-            </Typography>
-          </div>
+          <Box
+                
+                marginTop={10}
+                borderRadius={3}
+                p={2}
+                mb={1}
+                width="100%" 
+          >
+          <img src="https://i.imgur.com/wfvVfwq.png" alt="BSB" />
+          </Box>
           <div className="flex flex-col space-y-2 items-center">
-            <Typography
-              fontFamily="Manrope, sans-serif"
-              fontSize="2rem"
-              color="#3a586b"
-            >
-              
-              GROUPS
-            </Typography>
+         
             {groups.length > 0 ? (
               <Box
                 bgcolor="#e4ecf0"
@@ -69,6 +65,15 @@ export default function Homepage() {
                 width="100%"
                 
               >
+                <div className="flex flex-col space-y-2 items-center">
+                <Typography
+                fontFamily="Manrope, sans-serif"
+                fontSize="2rem"
+                color="#3a586b"
+                >
+                GROUPS
+                </Typography>
+                </div>
                 <div className="h-[50vh] px-5 overflow-y-hidden hover:overflow-y-scroll">
                   {groups.map((g) => (
                     <Grid item xs={12} sm={6} md = {4}key={listId}>
