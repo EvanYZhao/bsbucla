@@ -54,7 +54,7 @@ export default function Homepage() {
           <Box borderRadius={3} p={2} mb={1} width="100%">
             {chatDisplay ? (
               <div className="h-[62vh]">
-                  <ChatBox groupId={chatId} />
+                <ChatBox groupId={chatId} />
               </div>
             ) : (
               <Box marginTop={10}>
@@ -63,24 +63,24 @@ export default function Homepage() {
             )}
           </Box>
           <div className="flex flex-col space-y-2 items-center">
-            {groups.length > 0 ? (
-              <Box
-                bgcolor="#e4ecf0"
-                marginTop={2}
-                borderRadius={3}
-                p={2}
-                mb={1}
-                width="100%"
-              >
-                <div className="flex flex-col space-y-2 items-center">
-                  <Typography
-                    fontFamily="Manrope, sans-serif"
-                    fontSize="2rem"
-                    color="#3a586b"
-                  >
-                    GROUPS
-                  </Typography>
-                </div>
+            <Box
+              bgcolor="#e4ecf0"
+              marginTop={2}
+              borderRadius={3}
+              p={2}
+              mb={1}
+              width="100%"
+            >
+              <div className="flex flex-col space-y-2 items-center">
+                <Typography
+                  fontFamily="Manrope, sans-serif"
+                  fontSize="2rem"
+                  color="#3a586b"
+                >
+                  GROUPS
+                </Typography>
+              </div>
+              {groups.length > 0 ? (
                 <div className="h-[50vh] px-5 overflow-y-hidden hover:overflow-y-scroll">
                   {groups.map((g) => (
                     <Grid item xs={12} sm={6} md={4} key={listId}>
@@ -95,8 +95,19 @@ export default function Homepage() {
                     </Grid>
                   ))}
                 </div>
-              </Box>
-            ) : null}
+              ) : (
+                <div className="h-[50vh] flex justify-center items-center">
+                  <Typography
+                    fontFamily="Manrope, sans-serif"
+                    fontSize="2rem"
+                    color="#3a586b"
+                    align="right"
+                  >
+                    You're not in any groups yet!
+                  </Typography>
+                </div>
+              )}
+            </Box>
           </div>
         </div>
       </div>
