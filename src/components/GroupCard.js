@@ -27,7 +27,8 @@ export default function GroupCard({ groupID, place }) {
   }, [groupID]);
 
   return (
-    <Card sx={{ minWidth: 275, minHeight: 100 }}>
+    <div  className="p-5 mb-8 rounded-2xl bg-neutral-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.1)]  "style={{ width: "100%", display: "flex", justifyContent:"space-between" }}>
+      
       <CardContent sx={{ 
         fontFamily: "Manrope, sans-serif",
         fontWeight: "bold",
@@ -44,10 +45,12 @@ export default function GroupCard({ groupID, place }) {
         </Typography>
       </CardContent>
       <CardActions>
+        
         <Button sx={{ color: "#3a586b", border: "1px solid rgba(58, 88, 107, 0.5)" }} onClick={() => navigate(`/group/${groupID}`)}>
           {group?.members?.at(0)?.hasOwnProperty("email") ? "View" : "Join"}
         </Button>
+        
       </CardActions>
-    </Card>
+  </div>
   );
 }
