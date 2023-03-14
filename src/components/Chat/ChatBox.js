@@ -197,9 +197,17 @@ export default function ChatBox({ groupId }) {
             }
           }}
           >
-          <Avatar className="hover:bg-blue-400" sx={{ bgcolor: blue[300] }}>
-            <ArrowForward fontSize="large"/>
-          </Avatar>
+          <Avatar
+  className="hover:bg-blue-400"
+  sx={{
+    bgcolor: "#e4ecf0",
+    "& svg": {
+      color: "#3a586b"
+    }
+  }}
+>
+  <ArrowForward fontSize="large"/>
+</Avatar>
         </IconButton>
       </div>
     </div>
