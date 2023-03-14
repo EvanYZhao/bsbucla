@@ -15,7 +15,7 @@ import { queryGroupFromId } from "../database/mongodb";
  * @param {*} groupID Group ID in MongoDB 'groups' collection
  * @returns {JSX.Element}
  */
-export default function GroupCard({ groupID }) {
+export default function GroupCard({ groupID, place }) {
   const { user } = UserAuth();
   const navigate = useNavigate();
 
@@ -41,11 +41,10 @@ export default function GroupCard({ groupID }) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button onClick={() => navigate(`/group/${groupID}`)}>
+        <Button onClick={() => navigate(`/group/${groupID}`, { state: place })}>
           {group?.members?.at(0)?.hasOwnProperty("email") ? "View" : "Join"}
         </Button>
       </CardActions>
     </Card>
   );
 }
-

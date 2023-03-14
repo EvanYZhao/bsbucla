@@ -20,6 +20,7 @@ export default function Homepage() {
   useEffect(() => {
     getUserProfile(user?.accessToken).then((profile) => {
       setGroups(profile.groups);
+      console.log("Back at home page", profile.groups.length);
     });
   }, [user]);
 
@@ -47,9 +48,9 @@ export default function Homepage() {
         <div className="flex flex-col space-y-6 items-center">
           <Typography fontFamily = "Manrope, sans-serif" color = "#3a586b" variant="h5">GROUPS</Typography>
           <div className="w-1/2 space-y-4">
-            {groups?.map((g) => (
-              <div key={listId}>
-                <GroupCard id={listId} groupID={g} />
+            {groups?.map((g, index) => (
+              <div key={index}>
+                <GroupCard groupID={g} place={"home"}/>
               </div>
             ))}
           </div>
