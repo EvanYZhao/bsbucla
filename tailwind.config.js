@@ -23,6 +23,7 @@ module.exports = {
       pink: colors.pink,
       teal: colors.teal,
       rose: colors.rose,
+      white: colors.white
     },
   },
   plugins: [
