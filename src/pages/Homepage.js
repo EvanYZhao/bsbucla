@@ -30,7 +30,6 @@ export default function Homepage() {
   const displayChat = (id) => {
     setChatDisplay(true);
     setChatId(id);
-    console.log("Chatting in dashboard for group: " + id);
   };
 
   return (
@@ -89,7 +88,7 @@ export default function Homepage() {
                         <GroupCard
                           id={listId}
                           groupID={g}
-                          place={"home"}
+                          place="home"
                           displayChat={() => displayChat(g)}
                         />
                       </div>

@@ -76,7 +76,7 @@ export default function GroupCard({ groupID, place, displayChat }) {
         ) : null}
         <Button
           sx={{ color: "#3a586b", border: "1px solid rgba(58, 88, 107, 0.5)" }}
-          onClick={() => navigate(`/group/${groupID}`)}
+          onClick={() => navigate(`/group/${groupID}`, {state: place})}
         >
           {group?.members?.at(0)?.hasOwnProperty("email") ? "View" : "Join"}
         </Button>
