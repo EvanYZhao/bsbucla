@@ -116,38 +116,51 @@ export default function SocketChatPage() {
   
   const lastMessageVisible = useIntersection(lastMessageRef, '0px');
 
-  const socketRef = useRef(socket);
+  const messageDate = (message) => {
+    return new Date(parseInt(message._id.substring(0,8), 16)*1000)
+  }
+
+  const sameId = (message1, message2) => {
+    return message1.userId === message2.userId;
+  }
+
+  const sameMinute = (message1, message2) => {
+    const minute = (message) => {
+      return (message.date.getTime() / 60000) | 0
+    }
+    return minute(message1) === minute(message2);
+  }
+
+  const sameDay = (message1, message2) => {
+    const day = (message) => {
+      return message.date.toLocaleDateString();
+    }
+    return day(message1) === day(message2);
+  }
 
   // Receive chatroom log history on connection
   useEffect(() => {
     socket?.on('s_history', messages => {
+
+      // Iteratively check previous messages for
+      // Same Author, Time, Day
       for (const [index, message] of messages.entries()) {
-        message.date = new Date(parseInt(message._id.substring(0,8), 16)*1000);
+        message.date = messageDate(message);
+        message.hideAuthor = false;
+        message.hideTime = false;
+        message.hideDay = false;
+
+        // Check previous message
         if (index > 0) {
-          if (messages[index-1].userId === message.userId) {
+          const prevMessage = messages[index-1];
+          if (sameId(message, prevMessage)) {
             message.hideAuthor = true;
-            if (((messages[index-1].date.getTime() / 60000) | 0) === ((message.date.getTime() / 60000) | 0)) {
-              message.hideTime = true;
-            }
-            else {
-              message.hideTime = false;
-            }
+            message.hideTime = sameMinute(prevMessage, message)
           }
-          else {
-            message.hideAuthor = false;
-            message.hideTime = false;
-          }
-          if (messages[index-1].date.toLocaleDateString() === message.date.toLocaleDateString()) {
-            message.hideDay = true; 
-          }
-          else {
-            message.hideDay = false;
-          }
+          message.hideDay = sameDay(prevMessage, message); 
         }
         else {
-          message.hideAuthor = false;
-          message.hideTime = false;
-          message.hideDay = false;
+          
         }
       }
       setTimeout(() => {
@@ -175,25 +188,7 @@ export default function SocketChatPage() {
 
   useEffect(() => {
       socket?.once('s_message', newMessage => {
-        const sameId = (message1, message2) => {
-          return message1.userId === message2.userId;
-        }
-
-        const sameMinute = (message1, message2) => {
-          const minute = (message) => {
-            return (message.date.getTime() / 60000) | 0
-          }
-          return minute(message1) === minute(message2);
-        }
-
-        const sameDay = (message1, message2) => {
-          const day = (message) => {
-            return message.date.toLocaleDateString();
-          }
-          return day(message1) === day(message2);
-        }
-
-        newMessage.date = new Date(parseInt(newMessage._id.substring(0,8), 16)*1000);
+        newMessage.date = messageId(newMessage);
         newMessage.hideAuthor = false;
         newMessage.hideDay = false;
         newMessage.hideTime = false;
