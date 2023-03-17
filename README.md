@@ -1,5 +1,5 @@
 # Bruin Study Buddies
-Add our pitch here
+Built by Anderson, Anooshkha, Evan, Scott, and Theo for Winter 2023 CS35L. This application aims to create a more closely intertwined UCLA student community by connecting people through their class planners. Students can search for courses they are taking, form groups, share contact information, and even chat in real time about with other students that are also registered under our platform.
 
 ## Built With
 - React - Frontend
@@ -7,19 +7,19 @@ Add our pitch here
 - Firebase - User Authentication
 
 ## How to Use
-clone
+Clone the repository
 ``` bash
-git clone <url>
+git clone https://github.com/EvanYZhao/bsbucla.git
 ```
-change directory into new clone
+Change directories into the cloned repository
 ``` bash
-cd <dirname>
+cd bsbucla
 ```
-install dependencies
+Install all the dependencies
 ``` bash
-npm install something
+npm install
 ```
-run app using following command
+Run our app using the following command
 ``` bash
 npm start
 ```

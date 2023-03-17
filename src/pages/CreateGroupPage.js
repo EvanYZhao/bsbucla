@@ -1,13 +1,7 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Box,
-  TextField,
-  Typography
-} from "@mui/material";
-import {
-  createGroup,
-} from "../database/mongodb";
+import { useLocation } from "react-router-dom";
+import { Button, Box, TextField, Typography } from "@mui/material";
+import { createGroup } from "../database/mongodb";
 import { UserAuth } from "../context/AuthContext";
 
 export default function CreateGroup() {
@@ -15,84 +9,78 @@ export default function CreateGroup() {
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [groupId, setGroupId] = useState(null);
-
   const [groupName, setGroupName] = useState("");
-  const [classId, setClassId] = useState("");
   const [maxPeople, setMaxPeople] = useState(0);
   const [description, setDescription] = useState("");
-  
-  const joinButtonHandler = () =>{
-    const response = createGroup(user?.accessToken, {name: groupName, description: description, 
-      courseId: classId, maxMembers: maxPeople})
-      .then(result => setGroupId(result.groupId))
-      .catch(err => setErrorMessage(err.response.data));
+  const location = useLocation();
+
+  const joinButtonHandler = () => {
+    createGroup(user?.accessToken, {
+      name: groupName,
+      description: description,
+      courseId: location.state,
+      maxMembers: maxPeople,
+    })
+      .then((result) => {
+        setGroupId(result.groupId);
+      })
+      .catch((err) => setErrorMessage(err.response.data));
   };
 
-  const clearButtonHandler = () =>{
+  const clearButtonHandler = () => {
     setDescription("");
     setGroupName("");
-    setClassId("");
     setMaxPeople("");
   };
 
-  const handleNameChange = e =>{
+  const handleNameChange = (e) => {
     setGroupName(e.target.value);
   };
 
-  const handleClassIdChange = e =>{
-    setClassId(e.target.value);
-  };
-
-  const handleMaxPeopleChange = e =>{
+  const handleMaxPeopleChange = (e) => {
     setMaxPeople(e.target.value);
   };
 
-  const handleDescriptionChange = e =>{
+  const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   };
 
-  const responseMessage = () =>{
-    if (groupId && errorMessage != null){
-      return `Group created! Group ID: ${groupId}`
-    }
-    else if (errorMessage){
-      return errorMessage
+  const responseMessage = () => {
+    if (errorMessage) {
+      return errorMessage;
+    } else {
+      return groupId && `Successfully Created Group!`
     }
   };
 
   return (
     <div className="bg-slate-100 h-full flex flex-col items-center">
-      <Typography 
-        variant="h2" 
-        fontFamily="Manrope, sans-serif" 
-        fontSize="3.8rem" 
+      <Typography
+        variant="h2"
+        fontFamily="Manrope, sans-serif"
+        fontSize="3.8rem"
         color="#3a586b"
         sx={{
-          marginBottom: '20px',
-          marginTop: '20px',
-          backgroundColor: '#e4ecf0',
-          padding: '16px',
-          borderRadius: '10px',
+          marginBottom: "20px",
+          marginTop: "20px",
+          backgroundColor: "#e4ecf0",
+          padding: "16px",
+          borderRadius: "10px",
         }}
       >
         Create your group:
       </Typography>
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          '& > :not(style)': { m: 3 },
+          display: "flex",
+          alignItems: "center",
+          "& > :not(style)": { m: 3 },
         }}
       >
         <TextField
           label="Group Name"
           onChange={handleNameChange}
           value={groupName}
-        />
-        <TextField
-          label="Class ID"
-          onChange={handleClassIdChange}
-          value={classId}
         />
         <TextField
           label="Group size"
@@ -102,15 +90,15 @@ export default function CreateGroup() {
         />
       </Box>
       <TextField
-          label="Group description"
-          multiline
-          rows={4}
-          sx={{
-            width:'500px'
-          }}
-          onChange={handleDescriptionChange}
-          value={description}
-        />
+        label="Group description"
+        multiline
+        rows={4}
+        sx={{
+          width: "500px",
+        }}
+        onChange={handleDescriptionChange}
+        value={description}
+      />
       <Button
         sx={{
           width: "200px",
@@ -120,8 +108,8 @@ export default function CreateGroup() {
           borderRadius: "8px",
           color: "#3a586b",
           backgroundColor: "#e4ecf0",
-          marginBottom: '16px',
-          marginTop: '16px'
+          marginBottom: "16px",
+          marginTop: "16px",
         }}
         onClick={joinButtonHandler}
       >
@@ -135,15 +123,13 @@ export default function CreateGroup() {
           fontSize: "16px",
           borderRadius: "8px",
           color: "#3a586b",
-          backgroundColor: "#e4ecf0"
+          backgroundColor: "#e4ecf0",
         }}
         onClick={clearButtonHandler}
       >
         Clear form
       </Button>
-      <Typography variant="h3">
-        {responseMessage()}
-      </Typography>
+      <Typography variant="h3">{responseMessage()}</Typography>
     </div>
   );
 }
