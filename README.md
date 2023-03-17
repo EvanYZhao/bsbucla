@@ -1,5 +1,5 @@
 # Bruin Study Buddies
-Built by Anderson, Anooshkha, Evan, Scott, and Theo for Winter 2023 CS35L. This application aims to create a more closely intertwined UCLA student community by connecting people through their class planners. Students can search for courses they are taking, form groups, share contact information, and even chat in real time about with other students that are also registered under our platform.
+Built by Anderson, Anooshkha, Evan, Scott, and Theo for Winter 2023 CS35L. This application aims to create a more closely intertwined UCLA student community by connecting people through their class planners. Students can search for courses they are taking, form groups, share contact information, and even chat in real time with other students that are also registered under our platform.
 
 ## Built With
 - React - Frontend
